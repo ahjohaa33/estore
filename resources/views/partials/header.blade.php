@@ -2,7 +2,7 @@
     <div class="header-area" id="headerArea">
       <div class="container h-100 d-flex align-items-center justify-content-between d-flex rtl-flex-d-row-r">
         <!-- Logo Wrapper -->
-        <div class="logo-wrapper"><a href="home.html"><img src="img/core-img/logo-small.png" alt=""></a></div>
+        <div class="logo-wrapper"><a class="text-black" style="font-size: 24px;" href="{{ route('homeRoute')}}">Topu Sports</a></div>
         <div class="navbar-logo-container d-flex align-items-center">
           <!-- Cart Icon -->
           <div class="cart-icon-wrap"><a href="cart.html"><i class="ti ti-basket-bolt"></i><span>13</span></a></div>
