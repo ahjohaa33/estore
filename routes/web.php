@@ -20,14 +20,15 @@ Route::get('/', function(){
 })->name('homeRoute');
 
 //backend routes
-Route::get('/admin', function(){
-    return view('pages.blade.backend.layout');
-})->name('adminRoute');
+
 
 Route::prefix('admin')->group(function(){
     Route::get('/', function(){
-        return view('pages.blade.backend.layout');
+        return view('pages.blade.backend.pages.categoryandslider');
     })->name('adminRoute');
+    Route::get('/product/upload', function(){
+        return view('pages.blade.backend.pages.productupload');
+    });
     Route::post('/createCategory', [CategoryController::class, 'store'])->name('createCategory');
     Route::post('/createSlider', [SliderController::class, 'store'])->name('createSlider');
 });
