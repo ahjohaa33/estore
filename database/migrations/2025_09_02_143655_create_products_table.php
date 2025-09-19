@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('price'); // could be decimal(10,2) if strict money handling
             $table->string('size')->nullable();
             $table->text('specification')->nullable();
-            $table->boolean('is_fav')->default(false);
+            $table->boolean('is_featured')->default(false);
             $table->integer('in_stock')->default(0);
             $table->enum('status', ['in_stock', 'out_of_stock', 'pre_order'])->default('in_stock');
             $table->timestamps();

@@ -134,7 +134,7 @@
             </div>
         </div>
         <!-- Flash Sale Slide -->
-        <div class="flash-sale-wrapper">
+        {{-- <div class="flash-sale-wrapper">
             <div class="container">
                 <div class="section-heading d-flex align-items-center justify-content-between rtl-flex-d-row-r">
                     <h6 class="d-flex align-items-center rtl-flex-d-row-r"><i
@@ -230,7 +230,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!-- Dark Mode -->
         <div class="container">
             <div class="dark-mode-wrapper mt-3 bg-img p-4 p-lg-5">
@@ -249,7 +249,8 @@
                             class="ms-1 ti ti-arrow-right"></i></a>
                 </div>
                 <div class="row g-2">
-                    <!-- Product Card -->
+                    @foreach ($products as $item)
+                         <!-- Product Card -->
                     <div class="col-6 col-md-4">
                         <div class="card product-card">
                             <div class="card-body">
@@ -257,19 +258,19 @@
                                 <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="ti ti-heart">
                                     </i></a>
                                 <!-- Thumbnail --><a class="product-thumbnail d-block" href="single-product.html"><img
-                                        class="mb-2" src="img/product/11.png" alt="">
+                                        class="mb-2" src="/storage/{{$item->images[0]}}" style="width: auto; height: 200px;" alt="">
                                     <!-- Offer Countdown Timer: Please use event time this format: YYYY/MM/DD hh:mm:ss -->
-                                    <ul class="offer-countdown-timer d-flex align-items-center shadow-sm"
+                                    {{-- <ul class="offer-countdown-timer d-flex align-items-center shadow-sm"
                                         data-countdown="2024/12/31 23:59:59">
                                         <li><span class="days">0</span>d</li>
                                         <li><span class="hours">0</span>h</li>
                                         <li><span class="minutes">0</span>m</li>
                                         <li><span class="seconds">0</span>s</li>
-                                    </ul>
+                                    </ul> --}}
                                 </a>
-                                <!-- Product Title --><a class="product-title" href="single-product.html">Beach Cap</a>
+                                <!-- Product Title --><a class="product-title" href="single-product.html">{{$item->name}}</a>
                                 <!-- Product Price -->
-                                <p class="sale-price">$13<span>$42</span></p>
+                                <p class="sale-price">{{$item->price}} TK<span></span></p>
                                 <!-- Rating -->
                                 <div class="product-rating"><i class="ti ti-star-filled"></i><i
                                         class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i
@@ -279,7 +280,9 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Product Card -->
+                    @endforeach
+                   
+                    {{-- <!-- Product Card -->
                     <div class="col-6 col-md-4">
                         <div class="card product-card">
                             <div class="card-body">
@@ -393,7 +396,7 @@
                                         class="ti ti-plus"></i></a>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

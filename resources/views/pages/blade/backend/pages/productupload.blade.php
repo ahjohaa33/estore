@@ -93,8 +93,8 @@
 <body>
   <div class="container">
     <h2>Upload Product</h2>
-    <form id="productForm">
-      
+    <form id="productForm" action="{{ route('createproduct') }}" method="POST" enctype="multipart/form-data">
+      @csrf
       <div class="form-group">
         <label for="name">Product Name</label>
         <input type="text" id="name" name="name" required>
@@ -102,7 +102,7 @@
 
       <div class="form-group">
         <label for="images">Product Images</label>
-        <input type="file" id="images" name="images" accept="image/*" multiple required>
+        <input type="file" id="images" name="images[]" accept="image/*" multiple required>
         <div id="imagePreview"></div>
       </div>
 
@@ -110,10 +110,9 @@
         <label for="category">Category</label>
         <select id="category" name="category" required>
           <option value="">-- Select Category --</option>
-          <option value="clothing">Clothing</option>
-          <option value="electronics">Electronics</option>
-          <option value="accessories">Accessories</option>
-          <option value="home">Home</option>
+         @foreach ($categories as $item)
+             <option value="{{$item->name}}">{{$item->name}}</option>
+         @endforeach
         </select>
       </div>
 
@@ -133,16 +132,19 @@
       </div>
 
       <div class="form-group checkbox-group">
-        <label><input type="checkbox" id="is_fav" name="is_fav"> Favorite</label>
-        <label><input type="checkbox" id="in_stock" name="in_stock" checked> In Stock</label>
+        <label for="is_fav">Featured</label>
+        <input type="checkbox" id="is_featured" name="is_featured">
+        <label for="in_stock">In Stock</label>
+        <input type="number" id="in_stock" name="in_stock"> 
+       
       </div>
 
       <div class="form-group">
         <label for="status">Status</label>
         <select id="status" name="status" required>
-          <option value="draft">Draft</option>
-          <option value="active">Active</option>
-          <option value="archived">Archived</option>
+          <option value="in_stock">in-stock</option>
+          <option value="out_of_stock">Sold out</option>
+          <option value="pre_order">Pre order</option>
         </select>
       </div>
 
@@ -180,18 +182,7 @@
     });
 
     // Form submission
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      tinymce.triggerSave(); // Save TinyMCE content back to textarea
-      const formData = new FormData(form);
-
-      // Debug: Show form data in console
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
-
-      alert("Product submitted successfully!");
-    });
+ 
   </script>
 </body>
 </html>
