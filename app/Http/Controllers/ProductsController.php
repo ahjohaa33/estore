@@ -20,6 +20,12 @@ class ProductsController extends Controller
         ]);
     }
 
+
+    public function singleProduct($slug){
+        $product = Products::where('name', $slug)->get();
+        return view('pages.blade.frontend.singleproduct')->with('productdetails', $product);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

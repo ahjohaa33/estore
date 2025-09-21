@@ -6,9 +6,6 @@
         <div class="sr-only"></div>
       </div>
     </div>
-    @include('../partials/header')
-    @include('../partials/sidenav')
-
-        @yield('content')
-
-    @include('../partials/footer')
+@yield('content')
+@include('../partials/sidenav')
+@include('../partials/footer')

@@ -24,6 +24,9 @@ Route::get('/', function(){
 })->name('homeRoute');
 
 
+Route::get('/{product}', [ProductsController::class, 'singleProduct']);
+
+
 
 //backend routes
 Route::prefix('admin')->group(function(){

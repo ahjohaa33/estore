@@ -1,5 +1,22 @@
 @extends('../../layout/layout')
 @section('content')
+    <!-- Header Area -->
+    <div class="header-area" id="headerArea">
+      <div class="container h-100 d-flex align-items-center justify-content-between d-flex rtl-flex-d-row-r">
+        <!-- Logo Wrapper -->
+        <div class="logo-wrapper"><a class="text-black" style="font-size: 24px;" href="{{ route('homeRoute')}}">Topu Sports</a></div>
+        <div class="navbar-logo-container d-flex align-items-center">
+          <!-- Cart Icon -->
+          <div class="cart-icon-wrap"><a href="cart.html"><i class="ti ti-basket-bolt"></i><span>13</span></a></div>
+          <!-- User Profile Icon -->
+          <div class="user-profile-icon ms-2"><a href="profile.html"><img src="img/bg-img/9.jpg" alt=""></a></div>
+          <!-- Navbar Toggler -->
+          <div class="suha-navbar-toggler ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaOffcanvas" aria-controls="suhaOffcanvas">
+            <div><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="page-content-wrapper">
         <!-- Search Form-->
         <!-- Search Form-->
@@ -258,7 +275,7 @@
                                 <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="ti ti-heart">
                                     </i></a>
                                 <!-- Thumbnail --><a class="product-thumbnail d-block" href="single-product.html"><img
-                                        class="mb-2" src="/storage/{{$item->images[0]}}" style="width: auto; height: 200px;" alt="">
+                                        class="mb-2" src="/storage/{{$item->images[0]}}" style="width: auto; max-height: 200px;" alt="">
                                     <!-- Offer Countdown Timer: Please use event time this format: YYYY/MM/DD hh:mm:ss -->
                                     {{-- <ul class="offer-countdown-timer d-flex align-items-center shadow-sm"
                                         data-countdown="2024/12/31 23:59:59">
@@ -268,7 +285,7 @@
                                         <li><span class="seconds">0</span>s</li>
                                     </ul> --}}
                                 </a>
-                                <!-- Product Title --><a class="product-title" href="single-product.html">{{$item->name}}</a>
+                                <!-- Product Title --><a class="product-title" href="/{{$item->name}}">{{$item->name}}</a>
                                 <!-- Product Price -->
                                 <p class="sale-price">{{$item->price}} TK<span></span></p>
                                 <!-- Rating -->
