@@ -24,7 +24,7 @@ Route::get('/', function(){
 })->name('homeRoute');
 
 
-Route::get('/{product}', [ProductsController::class, 'singleProduct']);
+Route::get('/product/{slug}', [ProductsController::class, 'singleProduct']);
 
 
 

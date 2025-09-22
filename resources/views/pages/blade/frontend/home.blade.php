@@ -285,7 +285,7 @@
                                         <li><span class="seconds">0</span>s</li>
                                     </ul> --}}
                                 </a>
-                                <!-- Product Title --><a class="product-title" href="/{{$item->name}}">{{$item->name}}</a>
+                                <!-- Product Title --><a class="product-title" href="/product/{{$item->name}}">{{$item->name}}</a>
                                 <!-- Product Price -->
                                 <p class="sale-price">{{$item->price}} TK<span></span></p>
                                 <!-- Rating -->

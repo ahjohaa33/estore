@@ -117,13 +117,21 @@
       </div>
 
       <div class="form-group">
-        <label for="price">Price ($)</label>
+        <label for="price">Price (TK)</label>
         <input type="number" id="price" name="price" min="0" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="offer_price">Offer Price (TK)</label>
+        <input type="number" id="offer_price" name="offer_price" min="0" step="0.01" required>
       </div>
 
       <div class="form-group">
         <label for="size">Size</label>
         <input type="text" id="size" name="size" placeholder="e.g. S, M, L, XL">
+      </div>
+      <div class="form-group">
+        <label for="color_variations">color_variations</label>
+        <input type="text" id="color_variations" name="color_variations" placeholder="e.g. Black, Red, Blue, Green">
       </div>
 
       <div class="form-group">

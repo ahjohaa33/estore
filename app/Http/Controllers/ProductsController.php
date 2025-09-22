@@ -23,7 +23,8 @@ class ProductsController extends Controller
 
     public function singleProduct($slug){
         $product = Products::where('name', $slug)->get();
-        return view('pages.blade.frontend.singleproduct')->with('productdetails', $product);
+        $relatedproducts = Products::where('category', $product[0]->category);
+        return view('pages.blade.frontend.singleproduct')->with('productdetails', $product)->with('relatedproducts', $relatedproducts);
     }
 
     /**
@@ -50,6 +51,8 @@ class ProductsController extends Controller
             'is_fav'        => 'nullable',
             'in_stock'      => 'nullable|integer|min:0',
             'status'        => 'required|string',
+            'offer_price'   => 'nullable|integer|min:0',
+            'color_variations' => 'nullable|string'
         ]);
 
       
@@ -68,9 +71,11 @@ class ProductsController extends Controller
         $product->images        = $imagePaths; // store as JSON
         $product->category      = $validated['category'];
         $product->price         = $validated['price'];
+        $product->offer_price   = $validated['offer_price'];
+        $product->color_variations  = $validated['color_variations'];
         $product->size          = $validated['size'] ?? null;
         $product->specification = $validated['specification'] ?? null;
-        $product->is_featured       = $request->has('is_featured') ? 1 : 0;
+        $product->is_featured   = $request->has('is_featured') ? 1 : 0;
         $product->in_stock      = $validated['in_stock'] ?? 0;
         $product->status        = $validated['status'];
         $product->save();
