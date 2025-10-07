@@ -5,23 +5,24 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\ClientController;
 use App\Models\Category;
 use App\Models\Slider;
 use App\Models\Products;
 
 
-Route::get('/', function () {
-    return view('pages.blade.home');
-});
+// Route::get('/', function () {
+//     return view('pages.blade.home');
+// });
 
 
-//Main Routes
-Route::get('/', function(){
-    $categories = Category::latest()->paginate(10);
-    $slider = Slider::latest()->paginate(10);
-    $products = Products::latest()->paginate(10);
-    return view('pages.blade.frontend.home')->with('categories', $categories)->with('sliders', $slider)->with('products', $products);
-})->name('homeRoute');
+// //Main Routes
+// Route::get('/', function(){
+//     $categories = Category::latest()->paginate(10);
+//     $slider = Slider::latest()->paginate(10);
+//     $products = Products::latest()->paginate(10);
+//     return view('pages.blade.frontend.home')->with('categories', $categories)->with('sliders', $slider)->with('products', $products);
+// })->name('homeRoute');
 
 
 Route::get('/product/{slug}', [ProductsController::class, 'singleProduct']);
@@ -46,3 +47,8 @@ Route::prefix('admin')->group(function(){
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/sliders', [SliderController::class, 'index']);
 Route::get('/products', [ProductsController::class, 'index']);
+
+
+
+//client routes
+Route::get('/', [ClientController::class, 'home'])->name('homeroute');
