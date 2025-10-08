@@ -13,6 +13,9 @@ class Products extends Model
         'images',
         'category',
         'price',
+        'offer_price',
+        'offer_duration',
+        'sale_count',
         'size',
         'specification',
         'is_fav',
@@ -22,7 +25,8 @@ class Products extends Model
 
     protected $casts = [
         'images' => 'array', // since it's stored as JSON
-        'is_fav' => 'boolean',
+        'is_fav' => 'integer',
+        'size' => 'array'
     ];
 
     /**
@@ -41,3 +45,4 @@ class Products extends Model
         return $this->reviews()->avg('rating');
     }
 }
+

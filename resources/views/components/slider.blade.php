@@ -1,8 +1,7 @@
-<div>
-    <      <!-- Hero Wrapper -->
+      <!-- Hero Wrapper -->
       <div class="hero-wrapper">
         <div class="container">
-          <div class="pt-1">
+          <div class="pt-0">
             <!-- Hero Slides-->
             <div class="hero-slides owl-carousel">
                 @foreach ($slides as $item)
@@ -22,4 +21,3 @@
           </div>
         </div>
       </div>
-</div>
