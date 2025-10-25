@@ -15,7 +15,7 @@
                 <a href="{{ route('admincustomers') }}" class="nav-item">
                     <i class="fas fa-users"></i> Customers
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('admincategories') }}" class="nav-item">
                     <i class="fas fa-chart-line"></i> Categories
                 </a>
                 <a href="{{ route('adminsettings') }}" class="nav-item">

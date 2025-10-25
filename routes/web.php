@@ -37,9 +37,10 @@ Route::prefix('admin')->group(function(){
     Route::get('/orders', [AdminController::class, 'orders'])->name('adminorders');
     Route::get('/customers', [AdminController::class, 'customers'])->name('admincustomers');
     Route::get('/settings', [AdminController::class, 'settings'])->name('adminsettings');
+    Route::get('/categories', [AdminController::class, 'categories'])->name('admincategories');
    
 
-    Route::post('/createCategory', [CategoryController::class, 'store'])->name('createCategory');
+    Route::post('/createCategory', [CategoryController::class, 'store'])->name('createcategoryadmin');
     Route::post('/createSlider', [SliderController::class, 'store'])->name('createSlider');
     Route::post('/v1/createproduct', [ProductsController::class, 'store'])->name('createproduct');
 });

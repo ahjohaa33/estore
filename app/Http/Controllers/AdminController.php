@@ -22,6 +22,10 @@ class AdminController extends Controller
         return view('admin.customers');
     }
 
+    public function categories(){
+        return view('admin.categoriesadmin');
+    }
+
     public function settings(){
         return view('admin.settings');
     }
