@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unsignedInteger('sale_count')->default(0);
             $table->text('specification')->nullable();
             $table->integer('is_fav')->default(0);
-            $table->boolean('in_stock')->default(1);
+            $table->integer('in_stock')->default(0);
             $table->boolean('is_featured')->default(0);
             $table->string('status')->default('active');
 

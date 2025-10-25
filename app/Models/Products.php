@@ -26,7 +26,9 @@ class Products extends Model
     protected $casts = [
         'images' => 'array', // since it's stored as JSON
         'is_fav' => 'integer',
-        'size' => 'array'
+        'size' => 'array',
+        'color' => 'array',
+        'in_stock' => 'integer'
     ];
 
     /**

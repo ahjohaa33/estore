@@ -41,7 +41,7 @@ Route::prefix('admin')->group(function(){
 
     Route::post('/createCategory', [CategoryController::class, 'store'])->name('createCategory');
     Route::post('/createSlider', [SliderController::class, 'store'])->name('createSlider');
-    Route::post('/createproduct', [ProductsController::class, 'store'])->name('createproduct');
+    Route::post('/v1/createproduct', [ProductsController::class, 'store'])->name('createproduct');
 });
 
 
