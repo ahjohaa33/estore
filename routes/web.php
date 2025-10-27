@@ -38,12 +38,18 @@ Route::prefix('admin')->group(function(){
     Route::get('/customers', [AdminController::class, 'customers'])->name('admincustomers');
     Route::get('/settings', [AdminController::class, 'settings'])->name('adminsettings');
     Route::get('/categories', [AdminController::class, 'categories'])->name('admincategories');
-   
+    
 
     Route::post('/createCategory', [CategoryController::class, 'store'])->name('createcategoryadmin');
     Route::post('/createSlider', [SliderController::class, 'store'])->name('createSlider');
     Route::post('/v1/createproduct', [ProductsController::class, 'store'])->name('createproduct');
+    Route::post('delete/products', [ProductsController::class, 'destroy'])->name('deleteproducts');
+    Route::post('delete/category', [CategoryController::class, 'bulk_delete'])->name('deletecategory');
 });
+
+
+//filter routes
+Route::get('filter-products', [ProductsController::class, 'filter'])->name('productfilter');
 
 
 //check routes for db

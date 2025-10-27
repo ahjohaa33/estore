@@ -18,18 +18,13 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $products = Products::all();
-        return response()->json([
-            'status' => 200,
-            'products' => $products
-        ]);
+        //
     }
 
 
-    public function singleProduct($slug){
-        $product = Products::where('name', $slug)->get();
-        $relatedproducts = Products::where('category', $product[0]->category);
-        return view('pages.blade.frontend.singleproduct')->with('productdetails', $product)->with('relatedproducts', $relatedproducts);
+    public function singleProduct($slug)
+    {
+        //
     }
 
     /**
@@ -151,9 +146,7 @@ class ProductsController extends Controller
      */
     public function show(Products $products)
     {
-        $categories = Category::all();
-        return view('pages.blade.backend.pages.productupload')->with('categories', $categories);
-
+        //
     }
 
     /**
@@ -175,8 +168,77 @@ class ProductsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Products $products)
+public function destroy(Products $products, Request $request)
+{
+    // Get selected product IDs (bulk delete)
+    $ids = $request->input('ids', []);
+
+    if (!empty($ids)) {
+        // Fetch all selected products
+        $items = Products::whereIn('id', $ids)->get();
+
+        foreach ($items as $item) {
+            // ✅ Delete all image fields if they exist
+            $imageFields = ['image', 'image2', 'image3', 'image4'];
+
+            foreach ($imageFields as $field) {
+                if (!empty($item->$field) && Storage::disk('public')->exists($item->$field)) {
+                    Storage::disk('public')->delete($item->$field);
+                }
+            }
+
+            // ✅ Delete the product record itself
+            $item->delete();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Selected products and their images deleted successfully.'
+        ]);
+    }
+
+    // ✅ Handle single delete (optional for RESTful delete route)
+    if ($products && $products->exists) {
+        $imageFields = ['image', 'image2', 'image3', 'image4'];
+
+        foreach ($imageFields as $field) {
+            if (!empty($products->$field) && Storage::disk('public')->exists($products->$field)) {
+                Storage::disk('public')->delete($products->$field);
+            }
+        }
+
+        $products->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product and its images deleted successfully.'
+        ]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'No products selected or invalid request.'
+    ]);
+}
+
+    public function filter(Request $request)
     {
-        //
+        $query = Products::query();
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        $products = $query->latest()->paginate(10);
+
+        if ($request->ajax()) {
+            return view('components.admin-products', compact('products'))->render();
+        }
+
+        return view('components.admin-products', compact('products'));
     }
 }

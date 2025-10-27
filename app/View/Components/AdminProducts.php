@@ -5,6 +5,8 @@ namespace App\View\Components;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use App\Models\Products;
+use App\Models\Category;
 
 class AdminProducts extends Component
 {
@@ -21,6 +23,8 @@ class AdminProducts extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.admin-products');
+        $products = Products::orderByDesc('id')->paginate(10);
+        $cats = Category::all();
+        return view('components.admin-products')->with('products', $products)->with('cats', $cats);
     }
 }

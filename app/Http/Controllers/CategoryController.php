@@ -148,14 +148,67 @@ public function store(Request $request)
     /**
      * Remove the specified category from storage.
      */
-    public function destroy(Category $category)
+    // public function destroy(Category $category)
+    // {
+    //     if ($category->category_image && Storage::disk('public')->exists($category->category_image)) {
+    //         Storage::disk('public')->delete($category->category_image);
+    //     }
+
+    //     $category->delete();
+
+    //     return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+    // }
+
+    public function bulk_delete(Request $request, Category $category = null)
     {
-        if ($category->category_image && Storage::disk('public')->exists($category->category_image)) {
-            Storage::disk('public')->delete($category->category_image);
+        // ✅ Handle Bulk Delete
+        if ($request->has('ids')) {
+            $ids = $request->input('ids');
+            $categories = Category::whereIn('id', $ids)->get();
+
+            foreach ($categories as $cat) {
+                if ($cat->category_image && Storage::disk('public')->exists($cat->category_image)) {
+                    Storage::disk('public')->delete($cat->category_image);
+                }
+                $cat->delete();
+            }
+
+            // If it's an AJAX request, return JSON
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Selected categories deleted successfully.'
+                ]);
+            }
+
+            // Otherwise redirect
+            return redirect()->back()
+                ->with('success', 'Selected categories deleted successfully.');
         }
 
-        $category->delete();
+        // ✅ Handle Single Delete (existing behavior)
+        if ($category && $category->exists) {
+            if ($category->category_image && Storage::disk('public')->exists($category->category_image)) {
+                Storage::disk('public')->delete($category->category_image);
+            }
 
-        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+            $category->delete();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Category deleted successfully.'
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', 'Category deleted successfully.');
+        }
+
+        // ✅ Fallback if nothing provided
+        return response()->json([
+            'success' => false,
+            'message' => 'No category found or invalid request.'
+        ], 400);
     }
 }

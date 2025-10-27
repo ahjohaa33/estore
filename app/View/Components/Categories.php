@@ -22,7 +22,7 @@ class Categories extends Component
      */
     public function render(): View|Closure|string
     {
-        $categories = Category::latest()->take(8)->get();
+        $categories = Category::all();
         return view('components.categories')->with('cats', $categories);
     }
 }

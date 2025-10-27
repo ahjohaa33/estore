@@ -28,18 +28,26 @@
                     <i class="fas fa-plus"></i> Add New Product
                 </button>
                 <div class="filter-group">
-                    <select class="filter-select">
-                        <option>All Categories</option>
-                        <option>Electronics</option>
-                        <option>Clothing</option>
-                        <option>Accessories</option>
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Accessories">Accessories</option>
                     </select>
-                    <select class="filter-select">
-                        <option>All Status</option>
-                        <option>Active</option>
-                        <option>Out of Stock</option>
-                        <option>Draft</option>
+
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                        <option value="Draft">Draft</option>
                     </select>
+
+                    <select class="filter-select" id="bulkAction">
+                        <option value="">Bulk Actions</option>
+                        <option value="Delete">Delete</option>
+                    </select>
+
+                    <button class="btn btn-primary" id="applyBtn">Apply</button>
                 </div>
             </div>
 
@@ -57,101 +65,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-image"></div>
-                                    <span>Wireless Headphones</span>
-                                </div>
-                            </td>
-                            <td>Electronics</td>
-                            <td>$89.99</td>
-                            <td>145</td>
-                            <td><span class="badge success">Active</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-image"></div>
-                                    <span>Smart Watch Pro</span>
-                                </div>
-                            </td>
-                            <td>Electronics</td>
-                            <td>$249.99</td>
-                            <td>89</td>
-                            <td><span class="badge success">Active</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-image"></div>
-                                    <span>Laptop Backpack</span>
-                                </div>
-                            </td>
-                            <td>Accessories</td>
-                            <td>$39.99</td>
-                            <td>234</td>
-                            <td><span class="badge success">Active</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-image"></div>
-                                    <span>Denim Jacket</span>
-                                </div>
-                            </td>
-                            <td>Clothing</td>
-                            <td>$79.99</td>
-                            <td>0</td>
-                            <td><span class="badge danger">Out of Stock</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="row-checkbox"></td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-image"></div>
-                                    <span>Running Shoes</span>
-                                </div>
-                            </td>
-                            <td>Clothing</td>
-                            <td>$129.99</td>
-                            <td>67</td>
-                            <td><span class="badge success">Active</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
+                        @forelse($products as $item)
+                            <tr>
+                                <td><input type="checkbox" class="row-checkbox" data-id="{{ $item->id }}"></td>
+                                <td>
+                                    <div class="product-cell">
+                                        <div class="product-image"></div>
+                                        <span>{{ $item->name }}</span>
+                                    </div>
+                                </td>
+                                <td>Electronics</td>
+                                <td>$89.99</td>
+                                <td>145</td>
+                                <td><span class="badge success">Active</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-icon" title="Delete"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td>No Products Found</td>
+
+                            </tr>
+                        @endforelse
+
+
                     </tbody>
                 </table>
                 <div class="table-pagination">
@@ -196,9 +137,11 @@
                         <label>Category</label>
                         <select class="form-input" name="category">
                             <option value="">Select category</option>
-                            <option>Electronics</option>
-                            <option>Clothing</option>
-                            <option>Accessories</option>
+                            @foreach ($cats as $item)
+                                <option value="{{ $item->name }}">{{ $item->name }}</option>
+                            @endforeach
+                            
+                            
                         </select>
                     </div>
                     <div class="form-group">
@@ -220,6 +163,7 @@
                 <!-- Color / Size -->
                 <div class="form-row">
                     <div class="form-group">
+
                         <label>Colors</label>
                         <input type="text" class="form-input" name="color"
                             placeholder='e.g. ["Red","Blue","Green"]'>
@@ -275,6 +219,7 @@
         </div>
     </div>
 
+    <!-- add product script-->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -339,7 +284,7 @@
                 });
 
                 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute(
-                'content');
+                    'content');
                 if (token) formData.append('_token', token);
 
                 try {
@@ -355,7 +300,7 @@
 
                     if (!response.ok) {
                         const message = data.message ||
-                        'Something went wrong. Please check your input.';
+                            'Something went wrong. Please check your input.';
                         if (data.errors) {
                             Object.values(data.errors).forEach(errArr => toastr.error(errArr.join(
                                 '<br>')));
@@ -366,6 +311,7 @@
                     }
 
                     toastr.success(data.message || 'Product added successfully.');
+                    location.reload();
 
                     // Reset form inputs
                     modal.querySelectorAll('input, textarea, select').forEach(el => {
@@ -388,6 +334,93 @@
                     addProductBtn.disabled = false;
                     addProductBtn.innerHTML = originalText;
                 }
+            });
+        });
+    </script>
+
+    <!-- filtering and bulk delete-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectAll = document.getElementById("selectAll");
+            const checkboxes = document.querySelectorAll(".row-checkbox");
+            const applyBtn = document.getElementById("applyBtn");
+            const bulkAction = document.getElementById("bulkAction");
+            const categoryFilter = document.getElementById("categoryFilter");
+            const statusFilter = document.getElementById("statusFilter");
+            const tableBody = document.querySelector(".data-table tbody");
+
+            // ✅ Select all checkboxes
+            selectAll.addEventListener("change", function() {
+                checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            });
+
+            // ✅ When Apply clicked
+            applyBtn.addEventListener("click", function() {
+                const action = bulkAction.value;
+                const category = categoryFilter.value;
+                const status = statusFilter.value;
+                const selectedIds = Array.from(document.querySelectorAll(".row-checkbox:checked"))
+                    .map(cb => cb.getAttribute("data-id"));
+
+                // === Case 1: Bulk Delete ===
+                if (action === "Delete") {
+                    if (selectedIds.length === 0) {
+                        alert("Please select at least one product to delete.");
+                        return;
+                    }
+                    if (!confirm("Are you sure you want to delete selected products?")) return;
+
+                    fetch("{{ route('deleteproducts') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                ids: selectedIds
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert(data.message || "Products deleted successfully!");
+                                location.reload();
+                            } else {
+                                alert(data.message || "Something went wrong!");
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert("An error occurred while deleting.");
+                        });
+                    return;
+                }
+
+                // === Case 2: Filter Products ===
+                fetch("{{ route('productfilter') }}?category=" + encodeURIComponent(category) + "&status=" +
+                        encodeURIComponent(status), {
+                            method: "GET",
+                            headers: {
+                                "X-Requested-With": "XMLHttpRequest"
+                            }
+                        })
+                    .then(response => response.text())
+                    .then(html => {
+                        // Replace table body dynamically
+                        const parser = new DOMParser();
+                        const newDoc = parser.parseFromString(html, 'text/html');
+                        const newTableBody = newDoc.querySelector('.data-table tbody');
+                        if (newTableBody) {
+                            tableBody.innerHTML = newTableBody.innerHTML;
+                        } else {
+                            tableBody.innerHTML =
+                                `<tr><td colspan="7" style="text-align:center;">No products found</td></tr>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("Error fetching filtered products.");
+                    });
             });
         });
     </script>

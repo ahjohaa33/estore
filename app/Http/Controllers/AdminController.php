@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class AdminController extends Controller
 {
@@ -23,7 +24,8 @@ class AdminController extends Controller
     }
 
     public function categories(){
-        return view('admin.categoriesadmin');
+        $categories = Category::orderBy('id')->paginate();
+        return view('admin.categoriesadmin')->with('categories', $categories);
     }
 
     public function settings(){
