@@ -7,7 +7,7 @@
       <div class="container">
         <div class="search-form rtl-flex-d-row-r">
           <form action="#" method="">
-            <input class="form-control" type="search" placeholder="Search in Suha">
+            <input class="form-control" type="search" placeholder="Search in Topu Sports...">
             <button type="submit"><i class="ti ti-search"></i></button>
           </form>
           <!-- Alternative Search Options -->

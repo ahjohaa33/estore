@@ -46,15 +46,26 @@ public function store(Request $request)
         $path = $request->file('slider_image')->store('sliders', 'public');
     }
 
-    Slider::create([
+    $slider = Slider::create([
         'slider_image'       => $path,
         'slider_title'       => $request->slider_title,
         'slider_description' => $request->slider_description,
         'slider_link'        => $request->slider_link,
     ]);
 
+    // ✅ Return JSON if AJAX or expects JSON
+    if ($request->ajax() || $request->wantsJson()) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Slider created successfully.',
+            'data'    => $slider
+        ]);
+    }
+
+    // ✅ Fallback for normal form submission
     return redirect()->back()->with('success', 'Slider created successfully.');
 }
+
 
 
     /**
@@ -87,5 +98,40 @@ public function store(Request $request)
     public function destroy(Slider $slider)
     {
         //
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            // No IDs selected
+            return $request->ajax()
+                ? response()->json(['success' => false, 'message' => 'No sliders selected for deletion.'], 400)
+                : redirect()->back()->with('error', 'No sliders selected for deletion.');
+        }
+
+        // Fetch the sliders
+        $sliders = Slider::whereIn('id', $ids)->get();
+
+        foreach ($sliders as $slider) {
+            // Delete image from storage if exists
+            if ($slider->slider_image && Storage::disk('public')->exists($slider->slider_image)) {
+                Storage::disk('public')->delete($slider->slider_image);
+            }
+
+            // Delete database record
+            $slider->delete();
+        }
+
+        // JSON or Redirect Response
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Selected sliders deleted successfully.'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Selected sliders deleted successfully.');
     }
 }

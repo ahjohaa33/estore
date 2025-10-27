@@ -23,11 +23,14 @@
 
 <body>
 
-
+    
     <x-admin-sidebar />
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     @yield('content')
 
     <script src="{{ asset('js/app.js') }}"></script>
+
 </body>
 
 </html>

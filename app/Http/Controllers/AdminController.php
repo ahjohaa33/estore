@@ -31,4 +31,8 @@ class AdminController extends Controller
     public function settings(){
         return view('admin.settings');
     }
+
+    public function sliders(){
+        return view('admin.slideradmin');
+    }
 }

@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', function() {
     initializeCharts();
     initializeModals();
@@ -113,6 +115,9 @@ function initializeCharts() {
         });
     }
 }
+
+
+
 
 function openModal(modalId) {
     const modal = document.getElementById(modalId);

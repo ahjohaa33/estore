@@ -23,6 +23,10 @@
            class="nav-item {{ request()->routeIs('admincategories*') ? 'active' : '' }}">
             <i class="fas fa-chart-line"></i> Categories
         </a>
+        <a href="{{ route('adminSliders') }}" 
+           class="nav-item {{ request()->routeIs('adminSliders*') ? 'active' : '' }}">
+            <i class="fas fa-chart-line"></i> Sliders
+        </a>
         <a href="{{ route('adminsettings') }}" 
            class="nav-item {{ request()->routeIs('adminsettings*') ? 'active' : '' }}">
             <i class="fas fa-cog"></i> Settings
