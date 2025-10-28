@@ -142,6 +142,7 @@
         @yield('content')
     </main>
 
+    <script src="{{ asset('js/app.js')}}"></script>
     <script>
         $(document).ready(function () {
             const sidebar = $('.sidebar');
