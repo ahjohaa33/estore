@@ -47,7 +47,7 @@ Route::prefix('admin')->group(function(){
 
     //slider
     Route::post('/createSlider', [SliderController::class, 'store'])->name('createSlider');
-    Route::post('delete/slider', [SliderController::class, 'bulk_delete'])->name('deleteSlider');
+    Route::post('delete/slider', [SliderController::class, 'bulkDelete'])->name('deleteSlider');
 
     //products
     Route::post('/v1/createproduct', [ProductsController::class, 'store'])->name('createproduct');

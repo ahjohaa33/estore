@@ -66,5 +66,23 @@
     <script src="{{ asset('js/no-internet.js') }}"></script>
     <script src="{{ asset('js/active.js') }}"></script>
     <script src="{{ asset('js/pwa.js') }}"></script>
+    <script>
+$(window).on('load', function() {
+  $('.product-carousel').owlCarousel({
+    items: 1,
+    loop: true,
+    margin: 10,
+    nav: true,
+    dots: true,
+    autoplay: true,
+    autoplayTimeout: 3000,
+    autoplayHoverPause: true,
+    navText: [
+      '<i class="ti ti-chevron-left"></i>',
+      '<i class="ti ti-chevron-right"></i>'
+    ]
+  });
+});
+</script>
   </body>
 </html>

@@ -37,9 +37,22 @@
 
                     <select class="filter-select" id="statusFilter">
                         <option value="">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Out of Stock">Out of Stock</option>
-                        <option value="Draft">Draft</option>
+                        @php
+                            $uniqueStatuses = $products->getCollection()
+                                ->pluck('status')
+                                ->unique()
+                                ->sort()
+                                ->values();
+                        @endphp
+                        
+                        @forelse($uniqueStatuses as $status)
+                            <option value="{{ $status }}">{{ $status }}</option>
+                        @empty
+                            <option disabled>No statuses available</option>
+                        @endforelse
+
+                        
+                        
                     </select>
 
                     <select class="filter-select" id="bulkAction">
@@ -70,13 +83,13 @@
                                 <td><input type="checkbox" class="row-checkbox" data-id="{{ $item->id }}"></td>
                                 <td>
                                     <div class="product-cell">
-                                        <div class="product-image"></div>
+                                        <div class="product-image"><img style="width: 40px; height:40px;" src="{{ asset('storage') }}/{{ $item->images[0] }}" /></div>
                                         <span>{{ $item->name }}</span>
                                     </div>
                                 </td>
-                                <td>Electronics</td>
-                                <td>$89.99</td>
-                                <td>145</td>
+                                <td>{{ $item->category }}</td>
+                                <td>{{ $item->price }} BDT<br> <span>Offer Price: {{ $item->offer_price . ' BDT' ?? 'N\A' }}</span></td>
+                                <td>{{ $item->in_stock }}</td>
                                 <td><span class="badge success">Active</span></td>
                                 <td>
                                     <div class="action-buttons">
