@@ -24,7 +24,7 @@ class ProductsController extends Controller
 
     public function singleProduct($slug)
     {
-        //
+        return view('frontend.single-product', ['slug'=> $slug] );
     }
 
     /**
@@ -40,63 +40,141 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        // ✅ Step 1: Validation rules
-        $validated = $request->validate([
-            'name'            => ['required', 'string', 'max:255'],
-            'category'        => ['required', 'string', 'max:255'],
-            'price'           => ['required', 'numeric', 'min:0'],
-            'offer_price'     => ['nullable', 'numeric', 'min:0', 'lt:price'],
-            'offer_duration'  => ['nullable', 'date', 'after_or_equal:today'],
-            'color'           => ['nullable', 'string'],
-            
-            'size'            => ['nullable', 'string'],
-           
-            'specification'   => ['nullable', 'string'],
-            'is_fav'          => ['nullable', 'integer'],
-            'in_stock'        => ['nullable', 'integer'],
-            'is_featured'     => ['nullable', 'boolean'],
-            'status'          => ['nullable'],
-            'sale_count'      => ['nullable', 'integer', 'min:0'],
-            'images'          => ['nullable', 'array'],
-            'images.*'        => ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-        ]);
+        // ---------- DEBUG: raw incoming ----------
+        Log::info('Incoming Product Request (raw)', $request->all());
 
-        DB::beginTransaction();
-        $uploadedImages = [];
+        // ---- Helpers (inline closures) ----
+        $parseJsonishArray = function ($value) {
+            // Accept array directly
+            if (is_array($value)) {
+                return array_values(array_unique(array_filter(array_map(
+                    fn($v) => is_string($v) ? trim($v) : $v,
+                    $value
+                ), fn($v) => $v !== '' && $v !== null)));
+            }
 
-        try {
-            // ✅ Step 2: Image uploads
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $file) {
-                    $path = $file->store('products', 'public');
-                    $uploadedImages[] = $path;
+            // Try JSON
+            if (is_string($value)) {
+                $trim = trim($value);
+                if ($trim !== '') {
+                    // Try strict JSON first
+                    $decoded = json_decode($trim, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        return array_values(array_unique(array_filter(array_map(
+                            fn($v) => is_string($v) ? trim($v) : $v,
+                            $decoded
+                        ), fn($v) => $v !== '' && $v !== null)));
+                    }
+                    // Fallback: comma-separated list
+                    $parts = array_map('trim', explode(',', $trim));
+                    $parts = array_values(array_unique(array_filter($parts, fn($v) => $v !== '')));
+                    return $parts ?: null;
                 }
             }
 
-            // ✅ Step 3: Normalize and prepare payload
+            return null; // keep null if empty/invalid
+        };
+
+        $bool01 = function ($value, $default = 0) {
+            // Accept 1/0, "1"/"0", true/false, "true"/"false", on/off, yes/no
+            if (is_bool($value)) return $value ? 1 : 0;
+
+            // PHP filter handles many string forms
+            $v = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($v === null) {
+                // Try numeric forms
+                if ($value === 1 || $value === '1') return 1;
+                if ($value === 0 || $value === '0') return 0;
+                return $default ? 1 : 0;
+            }
+            return $v ? 1 : 0;
+        };
+
+        $intOrNull = fn($v) => is_numeric($v) ? (int)$v : null;
+        $floatOrNull = fn($v) => is_numeric($v) ? (float)$v : null;
+
+        // ---- Gentle normalization (no hard validation) ----
+        $name           = trim((string) $request->input('name', ''));
+        $category       = trim((string) $request->input('category', ''));
+        $price          = $floatOrNull($request->input('price'));
+        $offer_price    = $floatOrNull($request->input('offer_price'));
+        $offer_duration = $request->input('offer_duration'); // keep raw; DB cast can handle or store string
+
+        // If offer_price > price, keep but you can also auto-correct or null it
+        // $offer_price = ($offer_price !== null && $price !== null && $offer_price >= $price) ? null : $offer_price;
+
+        $color          = $parseJsonishArray($request->input('color'));
+        $size           = $parseJsonishArray($request->input('size'));
+
+        $specification  = $request->input('specification'); // string or null
+        $is_fav         = $bool01($request->input('is_fav', 0), 0);
+        $in_stock       = $intOrNull($request->input('in_stock')) ?? 0;
+        $is_featured    = $bool01($request->input('is_featured', 0), 0); // <— robust
+        $status         = $request->input('status', 'active'); // default
+        $sale_count     = $intOrNull($request->input('sale_count')) ?? 0;
+
+        // ---------- DEBUG: normalized ----------
+        Log::info('Normalized Product Payload (pre-upload)', [
+            'name'           => $name,
+            'category'       => $category,
+            'price'          => $price,
+            'offer_price'    => $offer_price,
+            'offer_duration' => $offer_duration,
+            'color'          => $color,        // expect array or null
+            'size'           => $size,         // expect array or null
+            'specification'  => $specification,
+            'is_fav'         => $is_fav,       // 0/1
+            'in_stock'       => $in_stock,
+            'is_featured'    => $is_featured,  // 0/1
+            'status'         => $status,
+            'sale_count'     => $sale_count,
+        ]);
+
+        $uploadedImages = [];
+
+        try {
+            DB::beginTransaction();
+
+            // ---- Images ----
+            if ($request->hasFile('images')) {
+                foreach ((array) $request->file('images') as $file) {
+                    if ($file && $file->isValid()) {
+                        $uploadedImages[] = $file->store('products', 'public');
+                    }
+                }
+            }
+
+            // ---- Build payload for DB ----
             $payload = [
-                'name'           => trim($validated['name']),
+                'name'           => $name ?: 'Untitled Product',
+                'category'       => $category ?: null,
+                'price'          => $price ?? 0.0,
+                'offer_price'    => $offer_price,
+                'offer_duration' => $offer_duration ? (string) $offer_duration : null,
+
+                // Arrays → rely on $casts in model (see note below)
+                'color'          => $color,   // array|null
+                'size'           => $size,    // array|null
+
+                'specification'  => $specification ?: null,
+                'is_fav'         => $is_fav,        // 0/1
+                'in_stock'       => $in_stock,
+                'is_featured'    => $is_featured,   // 0/1
+                'status'         => in_array($status, ['active','draft','inactive','outofstock'], true) ? $status : 'active',
+                'sale_count'     => $sale_count,
+
+                // Save images array (model cast to json/array)
                 'images'         => !empty($uploadedImages) ? $uploadedImages : null,
-                'color'          => isset($validated['color']) ? $validated['color'] : null,
-                'size'           => isset($validated['size']) ? $validated['size'] : null,
-                'category'       => $validated['category'] ?? null,
-                'price'          => (float) $validated['price'],
-                'offer_price'    => $validated['offer_price'] ?? null,
-                'offer_duration' => $validated['offer_duration'] ?? null,
-                'sale_count'     => $validated['sale_count'] ?? 0,
-                'specification'  => $validated['specification'] ?? null,
-                'is_fav'         => $validated['is_fav'] ??  0,
-                'in_stock'       => $validated['in_stock'] ?? 0,
-                'is_featured'    =>(bool)($validated['is_featured']) ?? false,
-                'status'         => $validated['status'],
             ];
 
-            // ✅ Step 4: Persist product atomically
+            // ---------- DEBUG: final payload ----------
+            Log::info('Final Product Payload (to DB)', $payload);
+
             $product = Products::create($payload);
 
             DB::commit();
 
-            // ✅ Step 5: Respond accordingly
+            // JSON response (AJAX)
             if ($request->expectsJson() || $request->wantsJson()) {
                 return response()->json([
                     'success' => true,
@@ -105,7 +183,7 @@ class ProductsController extends Controller
                 ], 201);
             }
 
-            // For normal form submissions (web)
+            // Web response
             return redirect()
                 ->route('products.index')
                 ->with('success', 'Product created successfully.');
@@ -113,18 +191,17 @@ class ProductsController extends Controller
         } catch (Throwable $e) {
             DB::rollBack();
 
-            // Cleanup uploaded images if something fails
+            // Cleanup uploaded files on error
             foreach ($uploadedImages as $path) {
                 Storage::disk('public')->delete($path);
             }
 
             Log::error('Product creation failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'error'   => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
                 'user_id' => optional($request->user())->id,
             ]);
 
-            // JSON error response
             if ($request->expectsJson() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
@@ -133,7 +210,6 @@ class ProductsController extends Controller
                 ], 500);
             }
 
-            // Web (Blade) response
             return redirect()
                 ->back()
                 ->withInput()

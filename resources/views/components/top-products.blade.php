@@ -46,7 +46,7 @@
                 @endif
               </div>
 
-              <a class="product-title" href="#">{{ $item->name }}</a>
+              <a class="product-title" href="{{ route('singleproductRoute', $item->name) }}">{{ $item->name }}</a>
               <p class="sale-price">{{ $item->offer_price }} BDT<span>{{ $item->price }} BDT</span></p>
               <div class="product-rating">
                 <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>

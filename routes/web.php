@@ -24,8 +24,8 @@ use App\Models\Products;
 //     return view('pages.blade.frontend.home')->with('categories', $categories)->with('sliders', $slider)->with('products', $products);
 // })->name('homeRoute');
 
-
-Route::get('/product/{slug}', [ProductsController::class, 'singleProduct']);
+//frontend routes
+Route::get('products/{slug}', [ProductsController::class, 'singleProduct'])->name('singleproductRoute');
 
 
 
@@ -52,6 +52,7 @@ Route::prefix('admin')->group(function(){
     //products
     Route::post('/v1/createproduct', [ProductsController::class, 'store'])->name('createproduct');
     Route::post('delete/products', [ProductsController::class, 'destroy'])->name('deleteproducts');
+   
     
 });
 

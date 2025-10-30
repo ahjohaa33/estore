@@ -13,12 +13,14 @@ class Products extends Model
         'images',
         'category',
         'price',
+        'color',
         'offer_price',
         'offer_duration',
         'sale_count',
         'size',
         'specification',
         'is_fav',
+        'is_featured',
         'in_stock',
         'status',
     ];
@@ -46,5 +48,7 @@ class Products extends Model
     {
         return $this->reviews()->avg('rating');
     }
+
+
 }
 

@@ -38,21 +38,17 @@
                     <select class="filter-select" id="statusFilter">
                         <option value="">All Status</option>
                         @php
-                            $uniqueStatuses = $products->getCollection()
-                                ->pluck('status')
-                                ->unique()
-                                ->sort()
-                                ->values();
+                            $uniqueStatuses = $products->getCollection()->pluck('status')->unique()->sort()->values();
                         @endphp
-                        
+
                         @forelse($uniqueStatuses as $status)
                             <option value="{{ $status }}">{{ $status }}</option>
                         @empty
                             <option disabled>No statuses available</option>
                         @endforelse
 
-                        
-                        
+
+
                     </select>
 
                     <select class="filter-select" id="bulkAction">
@@ -83,12 +79,14 @@
                                 <td><input type="checkbox" class="row-checkbox" data-id="{{ $item->id }}"></td>
                                 <td>
                                     <div class="product-cell">
-                                        <div class="product-image"><img style="width: 40px; height:40px;" src="{{ asset('storage') }}/{{ $item->images[0] }}" /></div>
+                                        <div class="product-image"><img style="width: 40px; height:40px;"
+                                                src="{{ asset('storage') }}/{{ $item->images[0] }}" /></div>
                                         <span>{{ $item->name }}</span>
                                     </div>
                                 </td>
                                 <td>{{ $item->category }}</td>
-                                <td>{{ $item->price }} BDT<br> <span>Offer Price: {{ $item->offer_price . ' BDT' ?? 'N\A' }}</span></td>
+                                <td>{{ $item->price }} BDT<br> <span>Offer Price:
+                                        {{ $item->offer_price . ' BDT' ?? 'N\A' }}</span></td>
                                 <td>{{ $item->in_stock }}</td>
                                 <td><span class="badge success">Active</span></td>
                                 <td>
@@ -153,8 +151,8 @@
                             @foreach ($cats as $item)
                                 <option value="{{ $item->name }}">{{ $item->name }}</option>
                             @endforeach
-                            
-                            
+
+
                         </select>
                     </div>
                     <div class="form-group">
@@ -240,7 +238,7 @@
             const addProductBtn = modal.querySelector('.btn.btn-primary');
             const imageInput = modal.querySelector('input[name="images[]"]');
 
-            // 🔹 Create an image preview container (right after the image input)
+            // 🔹 Create Image Preview Container
             const previewContainer = document.createElement('div');
             previewContainer.classList.add('image-preview-container');
             previewContainer.style.display = 'flex';
@@ -249,18 +247,17 @@
             previewContainer.style.marginTop = '10px';
             imageInput.insertAdjacentElement('afterend', previewContainer);
 
-            // 🔹 Show image previews when files are selected
+            // 🔹 Preview Selected Images
             imageInput.addEventListener('change', (e) => {
-                previewContainer.innerHTML = ''; // Clear old previews
-
+                previewContainer.innerHTML = '';
                 const files = Array.from(e.target.files);
                 if (!files.length) return;
 
                 files.forEach(file => {
-                    if (!file.type.startsWith('image/')) return; // Skip non-image files
+                    if (!file.type.startsWith('image/')) return;
 
                     const reader = new FileReader();
-                    reader.onload = (ev) => {
+                    reader.onload = ev => {
                         const img = document.createElement('img');
                         img.src = ev.target.result;
                         img.style.width = '80px';
@@ -274,31 +271,66 @@
                 });
             });
 
-            // 🔹 Handle Add Product button click
+            // 🔹 Handle Add Product Submit
             addProductBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
 
-                // Disable button & show spinner
+                const requiredFields = ['name', 'price', 'category'];
+                let missing = [];
+
+                requiredFields.forEach(name => {
+                    const field = modal.querySelector(`[name="${name}"]`);
+                    if (field && !field.value.trim()) missing.push(name);
+                });
+
+                if (missing.length) {
+                    toastr.warning('Please fill required fields: ' + missing.join(', '));
+                    return;
+                }
+
                 const originalText = addProductBtn.innerHTML;
                 addProductBtn.disabled = true;
                 addProductBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Adding...`;
 
                 const formData = new FormData();
+
                 modal.querySelectorAll('input[name], select[name], textarea[name]').forEach(input => {
                     const name = input.name;
+                    if (!name) return;
 
-                    if (input.type === 'file') {
-                        Array.from(input.files).forEach(file => formData.append(name, file));
-                    } else if (input.type === 'checkbox' || input.type === 'radio') {
-                        if (input.checked) formData.append(name, input.value);
-                    } else {
-                        formData.append(name, input.value);
+                    switch (input.type) {
+                        case 'file':
+                            Array.from(input.files).forEach(file => formData.append(name,
+                            file));
+                            break;
+                        case 'checkbox':
+                        case 'radio':
+                            if (input.checked) formData.append(name, input.value);
+                            else if (!formData.has(name)) formData.append(name, '0');
+                            break;
+                        default:
+                            formData.append(name, input.value.trim());
+                            break;
                     }
                 });
 
+                // 🔹 CSRF Token
                 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute(
-                    'content');
+                'content');
                 if (token) formData.append('_token', token);
+
+                // 🔹 Log all FormData key-value pairs before sending
+                console.group('%c📦 FORM DATA SUBMISSION', 'color: #2c7be5; font-weight: bold;');
+                for (let pair of formData.entries()) {
+                    if (pair[1] instanceof File) {
+                        console.log(
+                            `${pair[0]}: [File] ${pair[1].name} (${(pair[1].size / 1024).toFixed(1)} KB)`
+                            );
+                    } else {
+                        console.log(`${pair[0]}:`, pair[1]);
+                    }
+                }
+                console.groupEnd();
 
                 try {
                     const response = await fetch('/admin/v1/createproduct', {
@@ -313,7 +345,7 @@
 
                     if (!response.ok) {
                         const message = data.message ||
-                            'Something went wrong. Please check your input.';
+                        'Something went wrong. Please check your input.';
                         if (data.errors) {
                             Object.values(data.errors).forEach(errArr => toastr.error(errArr.join(
                                 '<br>')));
@@ -326,30 +358,30 @@
                     toastr.success(data.message || 'Product added successfully.');
                     location.reload();
 
-                    // Reset form inputs
+                    // 🔹 Reset form after success
                     modal.querySelectorAll('input, textarea, select').forEach(el => {
                         if (el.type === 'file') el.value = '';
                         else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                        else if (el.type === 'checkbox' || el.type === 'radio') el.checked =
+                            false;
                         else el.value = '';
                     });
 
-                    // Clear image previews
                     previewContainer.innerHTML = '';
-
-                    // Close modal if available
                     if (typeof closeModal === 'function') closeModal('addProductModal');
 
                 } catch (error) {
-                    console.error('Error:', error);
+                    console.error('❌ Error:', error);
                     toastr.error('An unexpected error occurred. Please try again.');
                 } finally {
-                    // Re-enable button & restore text
                     addProductBtn.disabled = false;
                     addProductBtn.innerHTML = originalText;
                 }
             });
         });
     </script>
+
+
 
     <!-- filtering and bulk delete-->
     <script>
@@ -410,7 +442,8 @@
                 }
 
                 // === Case 2: Filter Products ===
-                fetch("{{ route('productfilter') }}?category=" + encodeURIComponent(category) + "&status=" +
+                fetch("{{ route('productfilter') }}?category=" + encodeURIComponent(category) +
+                        "&status=" +
                         encodeURIComponent(status), {
                             method: "GET",
                             headers: {
