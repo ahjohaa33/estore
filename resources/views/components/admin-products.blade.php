@@ -357,6 +357,7 @@
 
                     toastr.success(data.message || 'Product added successfully.');
                     location.reload();
+                    
 
                     // 🔹 Reset form after success
                     modal.querySelectorAll('input, textarea, select').forEach(el => {

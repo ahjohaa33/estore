@@ -69,12 +69,12 @@
                 @if(!empty($product->color))
                     @foreach($product->color as $index => $item)
                         <div class="form-check mb-0">
-                            <input class="form-check-input {{ $item }}" 
+                            <input class="form-check-input " 
                                 id="colorRadio{{ $index }}" 
                                 type="radio" 
                                 name="colorRadio" 
                                 {{ $loop->first ? 'checked' : '' }}>
-                            <label class="form-check-label" for="colorRadio{{ $index }}"></label>
+                            <label class="form-check-label" for="colorRadio{{ $index }}">{{ $item }}</label>
                         </div>
                     @endforeach
                 @endif
@@ -87,21 +87,19 @@
             <div class="choose-size-wrapper text-end">
               <p class="mb-1 font-weight-bold">Size</p>
               <div class="choose-size-radio d-flex align-items-center">
-                <!-- Single Radio Input-->
-                <div class="form-check mb-0 me-2">
-                  <input class="form-check-input" id="sizeRadio1" type="radio" name="sizeRadio">
-                  <label class="form-check-label" for="sizeRadio1">S</label>
-                </div>
-                <!-- Single Radio Input-->
-                <div class="form-check mb-0 me-2">
-                  <input class="form-check-input" id="sizeRadio2" type="radio" name="sizeRadio" checked>
-                  <label class="form-check-label" for="sizeRadio2">M</label>
-                </div>
-                <!-- Single Radio Input-->
-                <div class="form-check mb-0 me-2">
-                  <input class="form-check-input" id="sizeRadio3" type="radio" name="sizeRadio">
-                  <label class="form-check-label" for="sizeRadio3">L</label>
-                </div>
+                @if(!empty($product->size))
+                    @foreach($product->size as $index => $item)
+                        <div class="form-check mb-0">
+                            <input class="form-check-input " 
+                                id="sizeRadio{{ $index }}" 
+                                type="radio" 
+                                name="sizeRadio" 
+                                {{ $loop->first ? 'checked' : '' }}>
+                            <label class="form-check-label" for="sizeRadio{{ $index }}">{{ $item }}</label>
+                        </div>
+                    @endforeach
+                @endif
+
               </div>
             </div>
           </div>
@@ -134,7 +132,7 @@
           </div>
         </div>
         <!-- Product Video -->
-        <div class="bg-img" style="background-image: url(img/product/18.jpg)">
+        <div class="bg-img" style="background-image: url({{ asset('img/product/18.jpg') }})">
           <div class="container">
             <div class="video-cta-content d-flex align-items-center justify-content-center">
               <div class="video-text text-center">
@@ -145,107 +143,7 @@
         </div>
         <div class="pb-3"></div>
         <!-- Related Products Slides-->
-        <div class="related-product-wrapper bg-white py-3 mb-3">
-          <div class="container">
-            <div class="section-heading d-flex align-items-center justify-content-between rtl-flex-d-row-r">
-              <h6>Related Products</h6><a class="btn btn-sm btn-secondary" href="shop-grid.html">View all</a>
-            </div>
-            <div class="related-product-slide owl-carousel">
-              <div class="card product-card bg-gray shadow-none">
-                <div class="card-body">
-                  <!-- Badge--><span class="badge rounded-pill badge-warning">Sale</span>
-                  <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="ti ti-heart">                       </i></a>
-                  <!-- Thumbnail --><a class="product-thumbnail d-block" href="single-product.html"><img class="mb-2" src="img/product/11.png" alt="">
-                    <!-- Offer Countdown Timer: Please use event time this format: YYYY/MM/DD hh:mm:ss -->
-                    <ul class="offer-countdown-timer d-flex align-items-center shadow-sm" data-countdown="2024/12/31 23:59:59">
-                      <li><span class="days">0</span>d</li>
-                      <li><span class="hours">0</span>h</li>
-                      <li><span class="minutes">0</span>m</li>
-                      <li><span class="seconds">0</span>s</li>
-                    </ul></a>
-                  <!-- Product Title --><a class="product-title" href="single-product.html">Beach Cap</a>
-                  <!-- Product Price -->
-                  <p class="sale-price">$13<span>$42</span></p>
-                  <!-- Rating -->
-                  <div class="product-rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                  <!-- Add to Cart --><a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
-                </div>
-              </div>
-              <div class="card product-card bg-gray shadow-none">
-                <div class="card-body">
-                  <!-- Badge--><span class="badge rounded-pill badge-success">New</span>
-                  <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="ti ti-heart">                       </i></a>
-                  <!-- Thumbnail --><a class="product-thumbnail d-block" href="single-product.html"><img class="mb-2" src="img/product/5.png" alt=""></a>
-                  <!-- Product Title --><a class="product-title" href="single-product.html">Wooden Sofa</a>
-                  <!-- Product Price -->
-                  <p class="sale-price">$74<span>$99</span></p>
-                  <!-- Rating -->
-                  <div class="product-rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                  <!-- Add to Cart --><a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
-                </div>
-              </div>
-              <div class="card product-card bg-gray shadow-none">
-                <div class="card-body">
-                  <!-- Badge--><span class="badge rounded-pill badge-success">Sale</span>
-                  <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="ti ti-heart">                       </i></a>
-                  <!-- Thumbnail --><a class="product-thumbnail d-block" href="single-product.html"><img class="mb-2" src="img/product/6.png" alt=""></a>
-                  <!-- Product Title --><a class="product-title" href="single-product.html">Roof Lamp</a>
-                  <!-- Product Price -->
-                  <p class="sale-price">$99<span>$113</span></p>
-                  <!-- Rating -->
-                  <div class="product-rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                  <!-- Add to Cart --><a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
-                </div>
-              </div>
-              <div class="card product-card bg-gray shadow-none">
-                <div class="card-body">
-                  <!-- Badge--><span class="badge rounded-pill badge-danger">-18%</span>
-                  <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="ti ti-heart">                       </i></a>
-                  <!-- Thumbnail --><a class="product-thumbnail d-block" href="single-product.html"><img class="mb-2" src="img/product/9.png" alt="">
-                    <!-- Offer Countdown Timer: Please use event time this format: YYYY/MM/DD hh:mm:ss -->
-                    <ul class="offer-countdown-timer d-flex align-items-center shadow-sm" data-countdown="2024/12/23 00:21:29">
-                      <li><span class="days">0</span>d</li>
-                      <li><span class="hours">0</span>h</li>
-                      <li><span class="minutes">0</span>m</li>
-                      <li><span class="seconds">0</span>s</li>
-                    </ul></a>
-                  <!-- Product Title --><a class="product-title" href="single-product.html">Sneaker Shoes</a>
-                  <!-- Product Price -->
-                  <p class="sale-price">$87<span>$92</span></p>
-                  <!-- Rating -->
-                  <div class="product-rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                  <!-- Add to Cart --><a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
-                </div>
-              </div>
-              <div class="card product-card bg-gray shadow-none">
-                <div class="card-body">
-                  <!-- Badge--><span class="badge rounded-pill badge-danger">-11%</span>
-                  <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="ti ti-heart"></i></a>
-                  <!-- Thumbnail --><a class="product-thumbnail d-block" href="single-product.html"><img class="mb-2" src="img/product/8.png" alt=""></a>
-                  <!-- Product Title --><a class="product-title" href="single-product.html">Wooden Chair</a>
-                  <!-- Product Price -->
-                  <p class="sale-price">$21<span>$25</span></p>
-                  <!-- Rating -->
-                  <div class="product-rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                  <!-- Add to Cart --><a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
-                </div>
-              </div>
-              <div class="card product-card bg-gray shadow-none">
-                <div class="card-body">
-                  <!-- Badge--><span class="badge rounded-pill badge-warning">On Sale</span>
-                  <!-- Wishlist Button--><a class="wishlist-btn" href="#"><i class="ti ti-heart"></i></a>
-                  <!-- Thumbnail --><a class="product-thumbnail d-block" href="single-product.html"><img class="mb-2" src="img/product/4.png" alt=""></a>
-                  <!-- Product Title --><a class="product-title" href="single-product.html">Polo Shirts</a>
-                  <!-- Product Price -->
-                  <p class="sale-price">$38<span>$41</span></p>
-                  <!-- Rating -->
-                  <div class="product-rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                  <!-- Add to Cart --><a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <x-related-products :category="$product->category" />
         <!-- Rating & Review Wrapper -->
         <div class="rating-and-review-wrapper bg-white py-3 mb-3 dir-rtl">
           <div class="container">
