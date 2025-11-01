@@ -6,6 +6,7 @@ use App\Http\Controllers\SliderController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Slider;
 use App\Models\Products;
@@ -55,6 +56,10 @@ Route::prefix('admin')->group(function(){
    
     
 });
+
+//Auth
+Route::get('login', [UserController::class, 'index'])->name('userlogin');
+Route::post('auth', [UserController::class, 'login'])->name('authentication');
 
 
 //filter routes

@@ -25,7 +25,7 @@ class BestSeller extends Component
     {
         $bestSeller = Products::where('updated_at', '>=', Carbon::now()->subDays(7))
                     ->orderBy('sale_count', 'desc')
-                    ->take(6)
+                    ->take(4)
                     ->get();
         return view('components.best-seller')->with('bestseller', $bestSeller);
     }

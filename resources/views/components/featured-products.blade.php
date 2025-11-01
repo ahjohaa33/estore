@@ -24,7 +24,7 @@
 
     <div class="row g-2">
       @forelse($featured as $item)
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
           <div class="card product-card">
             <div class="card-body">
               

@@ -5,9 +5,8 @@ namespace App\View\Components;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use App\Models\Products;
 
-class TopProducts extends Component
+class UserLogin extends Component
 {
     /**
      * Create a new component instance.
@@ -22,9 +21,6 @@ class TopProducts extends Component
      */
     public function render(): View|Closure|string
     {
-        $topProducts = Products::orderBy('sale_count', 'desc')
-                        ->take(4) 
-                        ->get();
-        return view('components.top-products')->with('products', $topProducts);
+        return view('components.user-login');
     }
 }

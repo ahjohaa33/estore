@@ -23,11 +23,12 @@
         </div>
       </div>
       <x-slider />
-      <x-categories />
-      <!-- Flash Sale Slide -->
+      <x-collections />
+      <!-- Top Products -->
+      <x-top-products />
 
       <!-- Dark Mode -->
-      <div class="container">
+      <div class="container my-4">
         <div class="dark-mode-wrapper mt-3 bg-img p-4 p-lg-5">
           <p class="text-white">You can change your display to a dark background using a dark mode.</p>
           <div class="form-check form-switch mb-0">
@@ -36,8 +37,7 @@
           </div>
         </div>
       </div>
-      <!-- Top Products -->
-      <x-top-products />
+
       <!-- CTA Area -->
       <div class="container">
         <div class="cta-text dir-rtl p-4 p-lg-5">
@@ -64,8 +64,10 @@
       </div>
       <!-- Featured Products Wrapper-->
       <x-featured-products />
+
       
-      <div class="pb-3">
+ 
+      {{-- <div class="pb-3">
         <div class="container">
           <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
             <h6>Collections</h6><a class="btn btn-sm btn-light" href="#">
@@ -99,7 +101,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> --}}
     </div>
     </div>
 @endsection

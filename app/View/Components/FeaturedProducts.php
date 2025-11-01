@@ -23,7 +23,7 @@ class FeaturedProducts extends Component
     public function render(): View|Closure|string
     {
         $featured = Products::where('is_featured', true)
-                        ->take(6) 
+                        ->take(4) 
                         ->get();
         return view('components.featured-products')->with('featured', $featured);
     }
