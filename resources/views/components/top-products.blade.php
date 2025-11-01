@@ -36,7 +36,7 @@
                     <div class="item">
                         <span class="badge rounded-pill badge-warning">Sale</span>
                         <a class="wishlist-btn" href="#"><i class="ti ti-heart"></i></a>
-                        <img style="object-fit: contain; height: 100%;" src="{{ asset('storage/' . ltrim($img, '/')) }}" alt="{{ $item->name }}">
+                        <img style="object-fit: cover;" src="{{ asset('storage/' . ltrim($img, '/')) }}" alt="{{ $item->name }}">
                     </div>
                   @endforeach
                 @else
