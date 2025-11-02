@@ -108,10 +108,11 @@
         <div class="selection-panel bg-white mb-3 py-3">
           <div class="container d-flex align-items-center justify-content-between">
             <!-- Choose Color-->
+            @if(!empty($product->color))
             <div class="choose-color-wrapper">
               <p class="mb-1 font-weight-bold">Color</p>
               <div class="choose-color-radio d-flex align-items-center">
-                @if(!empty($product->color))
+                
                     @foreach($product->color as $index => $item)
                         <div class="form-check mb-0">
                             <input class="form-check-input " 
@@ -122,12 +123,13 @@
                             <label class="form-check-label" for="colorRadio{{ $index }}">{{ $item }}</label>
                         </div>
                     @endforeach
-                @endif
+                
 
                
 
               </div>
             </div>
+            @endif
             <!-- Choose Size-->
             <div class="choose-size-wrapper text-end">
               <p class="mb-1 font-weight-bold">Size</p>

@@ -25,6 +25,10 @@ use App\Models\Products;
 //     return view('pages.blade.frontend.home')->with('categories', $categories)->with('sliders', $slider)->with('products', $products);
 // })->name('homeRoute');
 
+Route::get('/bal', function(){
+    return view('admin.admin2.layout2');
+});
+
 //frontend routes
 Route::get('products/{slug}', [ProductsController::class, 'singleProduct'])->name('singleproductRoute');
 
@@ -55,6 +59,15 @@ Route::prefix('admin')->group(function(){
     Route::post('delete/products', [ProductsController::class, 'destroy'])->name('deleteproducts');
    
     
+});
+
+//cart routes
+Route::prefix('cart')->group(function(){
+    Route::get('/', [CartController::class, 'show'])->name('cart.show');
+    Route::post('/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/update/{item}', [CartController::class, 'updateQty'])->name('cart.update');
+    Route::delete('/item/{item}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::delete('/clear', [CartController::class, 'clear'])->name('cart.clear');
 });
 
 //Auth
