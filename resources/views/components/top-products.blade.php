@@ -49,8 +49,36 @@
               <a class="product-title" href="{{ route('singleproductRoute', $item->name) }}">{{ $item->name }}</a>
               <p class="sale-price">{{ $item->offer_price }} BDT<span>{{ $item->price }} BDT</span></p>
               <div class="product-rating">
-                <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>
-              </div>
+              @php
+                $avg = round($item->reviews_avg_rating ?? 0, 1); // 0–5, one decimal
+                $full = (int) floor($avg);
+                $dec  = $avg - $full;
+                // .75+ rounds up to another full star; .25–.74 shows a half
+                if ($dec >= 0.75) { $full++; $half = 0; }
+                else { $half = ($dec >= 0.25) ? 1 : 0; }
+                $empty = 5 - $full - $half;
+              @endphp
+
+              {{-- full stars --}}
+              @for ($i = 0; $i < $full; $i++)
+                <i class="ti ti-star-filled"></i>
+              @endfor
+
+              {{-- half star --}}
+              @if ($half)
+                <i class="ti ti-star-half-filled"></i>
+              @endif
+
+              {{-- empty stars --}}
+              @for ($i = 0; $i < $empty; $i++)
+                <i class="ti ti-star"></i>
+              @endfor
+            </div>
+
+            <small class="text-muted">
+               ({{ $item->reviews_count }} {{ Str::plural('review', $item->reviews_count) }})
+            </small>
+
               <a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
             </div>
           </div>

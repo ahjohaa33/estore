@@ -15,7 +15,7 @@ class RelatedProducts extends Component
      */
     public function __construct($category)
     {
-        $this->product = Products::where('category', $category)->get();
+        $this->product = Products::where('category', $category)->withAvg('reviews', 'rating')->withCount('reviews')->get();
     }
 
     /**

@@ -2,7 +2,7 @@
     <div class="header-area" id="headerArea">
       <div class="container h-100 d-flex align-items-center justify-content-between d-flex rtl-flex-d-row-r">
         <!-- Logo Wrapper -->
-        <div class="logo-wrapper"><a style="text-decoration: none; font-size: 24px; color: black;" href="{{ route('homeroute') }}">{{ config('app.name') }}</a></div>
+        <div class="logo-wrapper"><a style="text-decoration: none; font-size: 24px;" href="{{ route('homeroute') }}">{{ config('app.name') }}</a></div>
         <div class="navbar-logo-container d-flex align-items-center">
           <!-- Cart Icon -->
           <div class="cart-icon-wrap"><a href="cart.html"><i class="ti ti-basket-bolt"></i><span>13</span></a></div>

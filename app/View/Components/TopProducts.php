@@ -22,7 +22,7 @@ class TopProducts extends Component
      */
     public function render(): View|Closure|string
     {
-        $topProducts = Products::orderBy('sale_count', 'desc')
+        $topProducts = Products::withAvg('reviews', 'rating')->withCount('reviews')->orderBy('sale_count', 'desc')
                         ->take(4) 
                         ->get();
         return view('components.top-products')->with('products', $topProducts);

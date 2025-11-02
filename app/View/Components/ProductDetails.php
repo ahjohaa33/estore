@@ -11,7 +11,9 @@ class ProductDetails extends Component
 
     public function __construct($slug)
     {
-        $this->product = Products::where('name', $slug)->firstOrFail();
+        $this->product = Products::where('name', $slug)->with([
+                'reviews' => fn($q) => $q->with('user')->latest()->take(20), // show top 20
+            ])->withAvg('reviews', 'rating')->withCount('reviews')->firstOrFail();
     }
 
     public function render()

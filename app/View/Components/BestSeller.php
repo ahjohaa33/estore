@@ -24,6 +24,8 @@ class BestSeller extends Component
     public function render(): View|Closure|string
     {
         $bestSeller = Products::where('updated_at', '>=', Carbon::now()->subDays(7))
+                    ->withAvg('reviews', 'rating')   // adds: reviews_avg_rating
+                    ->withCount('reviews')
                     ->orderBy('sale_count', 'desc')
                     ->take(4)
                     ->get();

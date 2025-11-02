@@ -1,4 +1,49 @@
-<div class="page-content-wrapper">
+<div class="page-content-wrapper container-desktop">
+  <style>
+    /* Mobile-first: full width */
+.container-desktop{
+  width:100%;
+  margin:0;
+}
+
+/* Optional: make the image slides look good on all sizes */
+.product-slide-wrapper .single-product-slide{
+  background-size:cover;
+  background-position:center;
+  /* Keeps a nice ratio for the hero area; adjust as you like */
+  aspect-ratio: 16 / 9;
+  /* Fallback if your build doesn't support aspect-ratio */
+  min-height: 220px;
+}
+
+/* Keep review avatars tidy */
+.rating-and-review-wrapper .user-thumbnail img{
+  width:44px; height:44px; object-fit:cover; border-radius:50%;
+}
+
+/* Desktop & up: containerized */
+@media (min-width: 992px){
+  .container-desktop{
+    max-width: 1200px;         /* tweak: 1140/1200/1280 as you prefer */
+    margin-left:auto;
+    margin-right:auto;
+    padding-left:16px;         /* small breathing room */
+    padding-right:16px;
+  }
+  /* Slight polish on slides when constrained */
+  .product-slide-wrapper .product-slides{
+    border-radius:12px;
+    overflow:hidden;
+  }
+}
+
+/* Make color/size radios wrap nicely on small screens */
+.choose-color-radio,
+.choose-size-radio{
+  gap:12px; flex-wrap:wrap;
+}
+
+  </style>
   <div class="product-slide-wrapper">
     <!-- Product Image Carousel -->
     <div class="product-slides owl-carousel">
@@ -145,39 +190,66 @@
         <!-- Related Products Slides-->
         <x-related-products :category="$product->category" />
         <!-- Rating & Review Wrapper -->
-        <div class="rating-and-review-wrapper bg-white py-3 mb-3 dir-rtl">
-          <div class="container">
-            <h6>Ratings &amp; Reviews</h6>
+      <div class="rating-and-review-wrapper bg-white py-3 mb-3 dir-rtl">
+        <div class="container">
+          <h6>
+            Ratings &amp; Reviews
+            <small class="text-muted">
+              ({{ number_format($product->reviews_avg_rating, 1) }}/5 • {{ $product->reviews_count }} reviews)
+            </small>
+          </h6>
+
+          @if ($product->reviews->isEmpty())
+            <p class="text-muted mb-0">No reviews yet. Be the first to review!</p>
+          @else
             <div class="rating-review-content">
               <ul class="ps-0">
-                <!-- Single User Review -->
-                <li class="single-user-review d-flex">
-                  <div class="user-thumbnail"><img src="img/bg-img/7.jpg" alt=""></div>
-                  <div class="rating-comment">
-                    <div class="rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                    <p class="comment mb-0">Very good product. It's just amazing!</p><span class="name-date">Designing World 12 Dec 2024</span><a class="review-image mt-2 border rounded" href="img/product/3.png"><img class="rounded-3" src="img/product/3.png" alt=""></a>
-                  </div>
-                </li>
-                <!-- Single User Review -->
-                <li class="single-user-review d-flex">
-                  <div class="user-thumbnail"><img src="img/bg-img/8.jpg" alt=""></div>
-                  <div class="rating-comment">
-                    <div class="rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                    <p class="comment mb-0">Very excellent product. Love it.</p><span class="name-date">Designing World 8 Dec 2024</span><a class="review-image mt-2 border rounded" href="img/product/4.png"><img class="rounded-3" src="img/product/4.png" alt=""></a><a class="review-image mt-2 border rounded" href="img/product/6.png"><img class="rounded-3" src="img/product/6.png" alt=""></a>
-                  </div>
-                </li>
-                <!-- Single User Review -->
-                <li class="single-user-review d-flex">
-                  <div class="user-thumbnail"><img src="img/bg-img/9.jpg" alt=""></div>
-                  <div class="rating-comment">
-                    <div class="rating"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
-                    <p class="comment mb-0">What a nice product it is. I am looking it's.</p><span class="name-date">Designing World 28 Nov 2024</span>
-                  </div>
-                </li>
+                @foreach ($product->reviews as $review)
+                  @php
+                    $rating = (int) $review->rating;            // 1..5
+                    $full   = max(0, min(5, $rating));
+                    $empty  = 5 - $full;
+                    $name   = $review->user->name ?? 'Anonymous';
+                    $avatar = $review->user->avatar ?? 'img/bg-img/7.jpg'; // fallback avatar
+                    $date   = \Illuminate\Support\Carbon::parse($review->created_at)->format('d M Y');
+                    $photos = $review->images ?? [];            // expects array of URLs
+                  @endphp
+
+                  <!-- Single User Review -->
+                  <li class="single-user-review d-flex">
+                    <div class="user-thumbnail">
+                      <img src="{{ $avatar }}" alt="{{ $name }}">
+                    </div>
+
+                    <div class="rating-comment">
+                      <div class="rating">
+                        @for ($i = 0; $i < $full; $i++)
+                          <i class="ti ti-star-filled"></i>
+                        @endfor
+                        @for ($i = 0; $i < $empty; $i++)
+                          <i class="ti ti-star"></i>
+                        @endfor
+                      </div>
+
+                      <p class="comment mb-0">{{ $review->comment }}</p>
+                      <span class="name-date">{{ $name }} • {{ $date }}</span>
+
+                      @if (!empty($photos))
+                        @foreach ($photos as $img)
+                          <a class="review-image mt-2 border rounded" href="{{ $img }}">
+                            <img class="rounded-3" src="{{ $img }}" alt="Review photo">
+                          </a>
+                        @endforeach
+                      @endif
+                    </div>
+                  </li>
+                @endforeach
               </ul>
             </div>
-          </div>
+          @endif
         </div>
+      </div>
+
         <!-- Ratings Submit Form-->
         <div class="ratings-submit-form bg-white py-3 dir-rtl">
           <div class="container">
