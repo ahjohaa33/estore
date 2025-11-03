@@ -26,8 +26,17 @@ use App\Models\Products;
 //     return view('pages.blade.frontend.home')->with('categories', $categories)->with('sliders', $slider)->with('products', $products);
 // })->name('homeRoute');
 
-Route::get('/bal', function(){
-    return view('admin.admin2.layout2');
+Route::get('/dashboard2', function(){
+    return view('admin.admin2.dashboard');
+});
+Route::get('/categories2', function(){
+    $categories = Category::orderBy('id')->paginate();
+    return view('admin.admin2.categories')->with('categories', $categories);
+});
+Route::get('/products2', function(){
+    $products = Products::orderByDesc('id')->paginate(10);
+    $cats = Category::all();
+    return view('admin.admin2.products')->with('products', $products)->with('cats', $cats);
 });
 
 //frontend routes
