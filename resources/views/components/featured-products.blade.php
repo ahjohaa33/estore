@@ -78,7 +78,17 @@
             <small class="text-muted">
                ({{ $item->reviews_count }} {{ Str::plural('review', $item->reviews_count) }})
             </small>
-              <a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
+                           <!-- In your product card/list -->
+            <a href="#"
+              class="btn btn-primary btn-sm add-to-cart"
+              data-url="{{ route('cart.add') }}"
+              data-product-id="{{ $item->id }}"
+              data-qty="1"
+              data-color="{{ $defaultColor ?? '' }}"
+              data-size="{{ $defaultSize ?? '' }}"
+              aria-label="Add to cart">
+              <i class="ti ti-plus"></i>
+            </a>
             </div>
           </div>
         </div>

@@ -11,6 +11,38 @@
   visibility: visible !important;
   opacity: 1 !important;
 }
+
+.btn-hover-wrap {
+  position: relative;
+  display: inline-block; /* so it hugs the button */
+}
+
+.btn-hover-popup {
+  position: absolute;
+  top: 50%;
+  right: 100%;             /* put it to the left of the button */
+  transform: translateY(-50%);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 6px 10px;
+  border-radius: 6px;
+  min-width: 150px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 99;
+}
+
+.btn-hover-wrap:hover .btn-hover-popup {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-4px); /* tiny nudge toward button */
+}
+
+
+
+
 </style>
 
 <div class="top-products-area py-3">
@@ -79,7 +111,28 @@
                ({{ $item->reviews_count }} {{ Str::plural('review', $item->reviews_count) }})
             </small>
 
-              <a class="btn btn-primary btn-sm" href="#"><i class="ti ti-plus"></i></a>
+
+            
+      <a href="#"
+          class="btn btn-primary btn-sm add-to-cart"
+          data-url="{{ route('cart.add') }}"
+          data-product-id="{{ $item->id }}"
+          data-qty="1"
+          data-color="{{ $defaultColor ?? '' }}"
+          data-size="{{ $defaultSize ?? '' }}"
+          aria-label="Add to cart">
+          <i class="ti ti-plus"></i>
+        </a>
+
+
+
+              
+            
+           
+              <!-- In your product card/list -->
+
+           
+
             </div>
           </div>
         </div>

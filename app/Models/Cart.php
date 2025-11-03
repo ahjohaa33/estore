@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Cart extends Model
 {
     protected $fillable = ['token','user_id','status','currency'];
-    public function items(): HasMany { return $this->hasMany(CartItem::class); }
+    public function items(): HasMany { return $this->hasMany(CartItems::class); }
 
     protected static function booted() {
         static::creating(function (Cart $cart) {

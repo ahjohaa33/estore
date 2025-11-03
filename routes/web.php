@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CartController;
 use App\Models\Category;
 use App\Models\Slider;
 use App\Models\Products;

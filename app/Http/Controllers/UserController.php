@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -19,174 +20,117 @@ class UserController extends Controller
         return view('login');
     }
 
-        // Make sure this guard matches your protected routes (e.g., 'web' or 'admin')
-    protected string $guard = 'web';
-    protected string $redirectRoute = 'admindashboard'; // change if needed
 
     public function login(Request $request)
     {
         $wantsJson = $request->expectsJson() || $request->wantsJson() || $request->ajax();
 
-        Log::debug('LOGIN start', [
-            'ip'      => $request->ip(),
-            'ua'      => substr((string) $request->userAgent(), 0, 200),
-            'guard'   => $this->guard,
-            'accepts' => $wantsJson ? 'json' : 'redirect',
-            'url'     => $request->fullUrl(),
+        $respond = function (int $status, array $payload, $redirect = null) use ($wantsJson) {
+            return $wantsJson
+                ? response()->json($payload, $status)
+                : ($redirect ?? back()->withErrors(['login' => $payload['message'] ?? 'Error'])->withInput());
+        };
+
+        // 1) Validate (light but safe)
+        $request->validate([
+            'login'         => ['required','string','min:3','max:191'],
+            'password'      => ['required','string','min:6','max:191'],
+            'remember'      => ['nullable','boolean'],
+            'expected_role' => ['nullable','in:admin,moderator,customer,advisor'],
         ]);
 
-        // 1) Validate: single "login" (email or phone)
-        $v = Validator::make($request->all(), [
-            'login'    => ['required', 'string', 'min:3', 'max:191'],
-            'password' => ['required', 'string', 'min:6', 'max:191'],
-            'remember' => ['nullable', 'boolean'],
-            'expected_role' => ['nullable', 'in:admin,moderator,customer,advisor'],
-        ]);
-
-        if ($v->fails()) {
-            Log::debug('LOGIN validation failed', ['errors' => $v->errors()->toArray()]);
-            return $this->respond(
-                $wantsJson, 422,
-                ['message' => 'Validation failed.', 'errors' => $v->errors()],
-                back()->withErrors($v)->withInput()
-            );
+        // 2) Normalize (defend against tricky Unicode & messy phones)
+        $rawLogin = trim((string) $request->input('login'));
+        if (class_exists(\Normalizer::class)) {
+            $rawLogin = \Normalizer::normalize($rawLogin, \Normalizer::FORM_KC) ?? $rawLogin;
         }
+        $isEmail = filter_var($rawLogin, FILTER_VALIDATE_EMAIL);
+        $login   = $isEmail
+            ? Str::lower($rawLogin)
+            : preg_replace('/(?!^\+)[^\d]/', '', $rawLogin); // keep a leading '+', strip other non-digits
+        $field   = $isEmail ? 'email' : 'phone';
 
-        $login        = trim((string) $request->input('login'));
-        $password     = (string) $request->input('password');
-        $remember     = (bool) $request->boolean('remember', false);
-        $expectedRole = $request->input('expected_role');
+        // 3) Concurrency-safe throttle (atomic)
+        $throttleKey = Str::lower($login).'|'.$request->ip();
+        $maxAttempts = 5;     // tune as needed
+        $decaySecs   = 60;    // per attempt window
 
-        $isEmail = filter_var($login, FILTER_VALIDATE_EMAIL);
-        if ($isEmail) $login = strtolower($login);
-        else          $login = preg_replace('/\s+/', '', $login); // phone: strip spaces
+        $result = RateLimiter::attempt($throttleKey, $maxAttempts, function () use (
+            $request, $field, $login
+        ) {
+            // 4) Single, tight lookup (only columns we need)
+            $user = \App\Models\User::query()
+                ->select('id','name','email','password','role','status')
+                ->where($field, $login)
+                ->first();
 
-        // 2) Rate limit
-        $throttleKey = Str::lower($login) . '|' . $request->ip();
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            $seconds = RateLimiter::availableIn($throttleKey);
-            Log::warning('LOGIN throttled', ['key' => $throttleKey, 'wait' => $seconds]);
-            return $this->respond(
-                $wantsJson, 429,
-                ['message' => "Too many attempts. Try again in {$seconds} seconds."],
-                back()->withErrors(['login' => "Too many attempts. Try again in {$seconds} seconds."])
-                    ->withInput()
-            );
-        }
+            // 5) Constant-time user enumeration defense
+            // Always perform a hash check (real or fake) to equalize timing.
+            // Precomputed bcrypt for the string 'fake-password-do-not-use'
+            static $FAKE_HASH = '$2y$10$XfKq1/3bY7v0A0P7tZr3Xu8y0h1mJ0TT4dQ4e2c8w8c2g0vQwXo0e';
+            $password = (string) $request->input('password');
+            $validPwd = $user ? Hash::check($password, $user->password) : Hash::check($password, $FAKE_HASH);
 
-        // 3) Find user
-        $field = $isEmail ? 'email' : 'phone';
-        $user = User::query()
-            ->where($field, $login)
-            ->first();
-
-        if (!$user) {
-            RateLimiter::hit($throttleKey, 60);
-            Log::debug('LOGIN no user found', ['field' => $field, 'login' => $login]);
-            return $this->respond(
-                $wantsJson, 401,
-                ['message' => 'These credentials do not match our records.'],
-                back()->withErrors(['login' => 'These credentials do not match our records.'])->withInput()
-            );
-        }
-
-        // 4) Gates: status must be active
-        $status = Str::lower((string) $user->status); // active|blocked|suspended|inactive
-        if ($status !== 'active') {
-            Log::debug('LOGIN blocked by status', ['status' => $status, 'user_id' => $user->id]);
-            return $this->respond(
-                $wantsJson, 403,
-                ['message' => 'Your account is not active. Please contact support.'],
-                back()->withErrors(['login' => 'Your account is not active. Please contact support.'])->withInput()
-            );
-        }
-
-        // OPTIONAL: email verification (temporarily disabled for diagnostics)
-        // if (is_null($user->email_verified_at)) {
-        //     Log::debug('LOGIN blocked: email not verified', ['user_id' => $user->id]);
-        //     return $this->respond(
-        //         $wantsJson, 403,
-        //         ['message' => 'Please verify your email before logging in.'],
-        //         back()->withErrors(['login' => 'Please verify your email before logging in.'])->withInput()
-        //     );
-        // }
-
-        // Optional portal role restriction
-        if (!empty($expectedRole)) {
-            $role = Str::lower((string) $user->role); // admin|moderator|customer|advisor
-            if ($role !== $expectedRole) {
-                Log::debug('LOGIN blocked: role mismatch', ['role' => $role, 'expected' => $expectedRole, 'user_id' => $user->id]);
-                return $this->respond(
-                    $wantsJson, 403,
-                    ['message' => 'You do not have permission to access this area.'],
-                    back()->withErrors(['login' => 'You do not have permission to access this area.'])->withInput()
-                );
+            if (!$user || !$validPwd) {
+                // fail this attempt (RateLimiter will count one)
+                return false;
             }
+
+            // 6) Post-auth gates (status/role) AFTER password check to avoid enumeration
+            if (Str::lower((string) $user->status) !== 'active') {
+                // Soft-fail: behave like invalid credentials to avoid leaking state
+                return false;
+            }
+            if ($request->filled('expected_role') &&
+                Str::lower((string) $user->role) !== Str::lower($request->input('expected_role'))) {
+                // Soft-fail: same reason
+                return false;
+            }
+
+            // 7) Login, rotate session
+            Auth::guard($this->guard)->loginUsingId($user->id, $request->boolean('remember', false));
+            $request->session()->regenerate();
+
+            // 8) Silent audit (optional fields)
+            try {
+                $user->forceFill([
+                    'last_login_at'   => now(),
+                    'last_login_ip'   => $request->ip(),
+                    'last_user_agent' => Str::limit((string) $request->userAgent(), 500, ''),
+                ])->saveQuietly();
+            } catch (\Throwable $e) {
+                // ignore audit failures to keep auth path hot
+            }
+
+            return $user;
+        }, $decaySecs);
+
+        // 9) Unified responses (fast path vs slow path)
+        if ($result === false) {
+            $available = RateLimiter::availableIn($throttleKey);
+            if ($available > 0 && RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
+                return $respond(429, ['message' => "Too many attempts. Try again in {$available} seconds."]);
+            }
+            return $respond(401, ['message' => 'Invalid credentials.']);
         }
 
-        // 5) Attempt login on the correct guard
-        $credentials = [$field => $login, 'password' => $password];
-
-        Log::debug('LOGIN attempting', ['guard' => $this->guard, 'field' => $field, 'login' => $login]);
-        $ok = Auth::guard($this->guard)->attempt($credentials, $remember);
-
-        if (!$ok) {
-            RateLimiter::hit($throttleKey, 60);
-            Log::debug('LOGIN invalid password', ['user_id' => $user->id]);
-            return $this->respond(
-                $wantsJson, 401,
-                ['message' => 'Invalid credentials.'],
-                back()->withErrors(['login' => 'Invalid credentials.'])->withInput()
-            );
-        }
-
-        // 6) Verify session & user on guard, then rotate session
+        // Success: optional cleanup (not strictly needed with attempt())
         RateLimiter::clear($throttleKey);
-        $request->session()->regenerate();
 
-        $guardCheck = Auth::guard($this->guard)->check();
-        $authedId   = optional(Auth::guard($this->guard)->user())->id;
-
-        Log::debug('LOGIN success', [
-            'guard_check' => $guardCheck,
-            'authed_id'   => $authedId,
-            'session_id'  => $request->session()->getId(),
-        ]);
-
-        if (!$guardCheck) {
-            // If this fires, it’s a session problem (cookie/domain/https)
-            Log::error('LOGIN session not sticking after attempt()', [
-                'driver' => config('session.driver'),
-                'domain' => config('session.domain'),
-                'secure' => config('session.secure'),
-                'sameSite' => config('session.same_site'),
-            ]);
-        }
-
-        // 7) Audit
-        $user->forceFill([
-            'last_login_at'   => now(),
-            'last_login_ip'   => $request->ip(),
-            'last_user_agent' => substr((string) $request->userAgent(), 0, 500),
-        ])->saveQuietly();
-
+        $user       = $result; // The actual User instance returned above
         $redirectTo = route($this->redirectRoute);
 
-        return $this->respond(
-            $wantsJson, 200,
-            [
-                'message'  => 'Logged in successfully.',
-                'user'     => [
-                    'id'     => $user->id,
-                    'name'   => $user->name,
-                    'email'  => $user->email,
-                    'role'   => $user->role,
-                    'status' => $user->status,
-                ],
-                'redirect' => $redirectTo,
+        return $respond(200, [
+            'message'  => 'Logged in successfully.',
+            'user'     => [
+                'id'     => $user->id,
+                'name'   => $user->name,
+                'email'  => $user->email,
+                'role'   => $user->role,
+                'status' => $user->status,
             ],
-            redirect()->intended($redirectTo)
-        );
+            'redirect' => $redirectTo,
+        ], redirect()->intended($redirectTo));
     }
 
     public function logout(Request $request)

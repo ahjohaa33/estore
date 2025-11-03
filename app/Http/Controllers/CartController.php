@@ -42,10 +42,11 @@ class CartController extends Controller
     }
 
     // Decide effective price from your product schema
-    protected function resolvePrice(Product $p): float
+    protected function resolvePrice(Products $p): float
     {
         $now = now();
-        if ($p->offer_price && $p->offer_duration && $now->lte($p->offer_duration)) {
+        if ($p->offer_price ) {
+           
             return (float) $p->offer_price;
         }
         return (float) $p->price;
@@ -71,16 +72,19 @@ class CartController extends Controller
             'size'       => ['nullable','string','max:100'],
         ]);
 
-        $cart = $this->getCart($request);
-        $product = Product::findOrFail($data['product_id']);
+        $cart    = $this->getCart($request);
+        $product = Products::findOrFail($data['product_id']);
 
         $qty = $data['qty'] ?? 1;
-        if ($qty < 1) $qty = 1;
+        if ($qty < 1) {
+            $qty = 1;
+        }
 
+        // price per unit (snapshot)
         $price = $this->resolvePrice($product);
 
-        // Merge line if same product+options exists
-        $item = CartItem::where([
+        // check if same line exists
+        $item = \App\Models\CartItems::where([
             'cart_id'    => $cart->id,
             'product_id' => $product->id,
             'color'      => $data['color'] ?? null,
@@ -88,17 +92,20 @@ class CartController extends Controller
         ])->first();
 
         if ($item) {
+            // update qty
             $item->qty += $qty;
             $item->unit_price = $price; // refresh snapshot
+            $item->total_price = $item->qty * $item->unit_price;  // 🔴 save line total
             $item->save();
         } else {
-            $item = CartItem::create([
-                'cart_id'    => $cart->id,
-                'product_id' => $product->id,
-                'color'      => $data['color'] ?? null,
-                'size'       => $data['size'] ?? null,
-                'qty'        => $qty,
-                'unit_price' => $price,
+            $item = \App\Models\CartItems::create([
+                'cart_id'     => $cart->id,
+                'product_id'  => $product->id,
+                'color'       => $data['color'] ?? null,
+                'size'        => $data['size'] ?? null,
+                'qty'         => $qty,
+                'unit_price'  => $price,
+                'total_price' => $qty * $price,                    // 🔴 save line total
             ]);
         }
 
@@ -106,9 +113,18 @@ class CartController extends Controller
             'message' => 'Added to cart',
             'cart_id' => $cart->id,
             'item_id' => $item->id,
+            'item'    => [
+                'product_id'  => $item->product_id,
+                'qty'         => $item->qty,
+                'unit_price'  => (float) $item->unit_price,
+                'total_price' => (float) $item->total_price,
+                'color'       => $item->color,
+                'size'        => $item->size,
+            ],
             'totals'  => $cart->refresh()->totals(),
         ]);
     }
+
 
     // POST /cart/update/{item}
     public function updateQty(Request $request, CartItem $item)
