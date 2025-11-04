@@ -29,15 +29,21 @@ use App\Models\Products;
 Route::get('/dashboard2', function(){
     return view('admin.admin2.dashboard');
 })->name('dashboard2');
+
+
 Route::get('/categories2', function(){
     $categories = Category::orderBy('id')->paginate();
     return view('admin.admin2.categories')->with('categories', $categories);
 })->name('categories2');
+
+
 Route::get('/products2', function(){
     $products = Products::orderByDesc('id')->paginate(10);
     $cats = Category::all();
     return view('admin.admin2.products')->with('products', $products)->with('cats', $cats);
 })->name('products2');
+
+
 
 //frontend routes
 Route::get('products/{slug}', [ProductsController::class, 'singleProduct'])->name('singleproductRoute');
@@ -62,7 +68,8 @@ Route::prefix('admin')->group(function(){
 
     //slider
     Route::post('/createSlider', [SliderController::class, 'store'])->name('createSlider');
-    Route::post('delete/slider', [SliderController::class, 'bulkDelete'])->name('deleteSlider');
+    Route::post('delete/slider', [SliderController::class, 'bulkDelete'])->name('delete
+    Slider');
 
     //products
     Route::post('/v1/createproduct', [ProductsController::class, 'store'])->name('createproduct');
