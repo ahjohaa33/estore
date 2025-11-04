@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
@@ -13,80 +14,152 @@
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
     <title>Ecom - Marketplace Dashboard Template</title>
-  </head>
-  <body>
+</head>
+
+<body>
 
     <div class="screen-overlay"></div>
-     <aside class="navbar-aside" id="offcanvas_aside">
-    <div class="aside-top"><a class="brand-wrap" href="index.html"><img class="logo" src="assets/imgs/theme/logo.svg"
-                alt="Evara Dashboard"></a>
+<aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+        <a class="brand-wrap" href="{{ route('admindashboard') }}">
+            <img class="logo" src="assets/imgs/theme/logo.svg" alt="Admin Dashboard">
+        </a>
         <div>
-            <button class="btn btn-icon btn-aside-minimize"><i
-                    class="text-muted material-icons md-menu_open"></i></button>
+            <button class="btn btn-icon btn-aside-minimize">
+                <i class="text-muted material-icons md-menu_open"></i>
+            </button>
         </div>
     </div>
     <nav>
         <ul class="menu-aside">
-            <li class="menu-item active"><a class="menu-link" href="index.html"><i
-                        class="icon material-icons md-home"></i><span class="text">Dashboard</span></a></li>
-            <li class="menu-item has-submenu"><a class="menu-link" href="page-products-list.html"><i
-                        class="icon material-icons md-shopping_bag"></i><span class="text">Products</span></a>
-                <div class="submenu"><a href="page-products-list.html">Product List</a><a
-                        href="page-products-grid.html">Product grid</a><a href="page-products-grid-2.html">Product grid
-                        2</a><a href="page-categories.html">Categories</a></div>
+            <!-- Dashboard -->
+            <li class="menu-item {{ request()->routeIs('dashboard2') ? 'active' : '' }}">
+                <a class="menu-link" href="{{ route('dashboard2') }}">
+                    <i class="icon material-icons md-home"></i>
+                    <span class="text">Dashboard</span>
+                </a>
             </li>
-            <li class="menu-item has-submenu"><a class="menu-link" href="page-orders-1.html"><i
-                        class="icon material-icons md-shopping_cart"></i><span class="text">Orders</span></a>
-                <div class="submenu"><a href="page-orders-1.html">Order list 1</a><a href="page-orders-2.html">Order
-                        list 2</a><a href="page-orders-detail.html">Order detail</a><a
-                        href="page-orders-tracking.html">Order tracking</a><a href="page-invoice.html">Invoice</a></div>
+            <li class="menu-item {{ request()->routeIs('categories2') ? 'active' : '' }}">
+                <a class="menu-link" href="{{ route('categories2') }}">
+                    <i class="icon material-icons md-home"></i>
+                    <span class="text">Categories</span>
+                </a>
             </li>
-            <li class="menu-item has-submenu"><a class="menu-link" href="page-sellers-cards.html"><i
-                        class="icon material-icons md-store"></i><span class="text">Sellers</span></a>
-                <div class="submenu"><a href="page-sellers-cards.html">Sellers cards</a><a
-                        href="page-sellers-list.html">Sellers list</a><a href="page-seller-detail.html">Seller
-                        profile</a></div>
+
+            <!-- Products -->
+            <li class="menu-item has-submenu {{ request()->routeIs('products2*') ? 'active' : '' }}">
+                <a class="menu-link" href="{{ route('products2') }}">
+                    <i class="icon material-icons md-shopping_bag"></i>
+                    <span class="text">Products</span>
+                </a>
+                <div class="submenu">
+                    <a href="{{ route('products2') }}" class="{{ request()->routeIs('products2') && !request()->has('view') ? 'active' : '' }}">
+                        All Products
+                    </a>
+                    <a href="{{ route('products2', ['view' => 'grid']) }}" class="{{ request()->get('view') == 'grid' ? 'active' : '' }}">
+                        Product Grid
+                    </a>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                        Add New Product
+                    </a>
+                </div>
             </li>
-            <li class="menu-item has-submenu"><a class="menu-link" href="page-form-product-1.html"><i
-                        class="icon material-icons md-add_box"></i><span class="text">Add product</span></a>
-                <div class="submenu"><a href="page-form-product-1.html">Add product 1</a><a
-                        href="page-form-product-2.html">Add product 2</a><a href="page-form-product-3.html">Add product
-                        3</a><a href="page-form-product-4.html">Add product 4</a></div>
+
+            <!-- Orders -->
+            <li class="menu-item has-submenu {{ request()->routeIs('adminorders*') ? 'active' : '' }}">
+                <a class="menu-link" href="{{ route('adminorders') }}">
+                    <i class="icon material-icons md-shopping_cart"></i>
+                    <span class="text">Orders</span>
+                </a>
+                <div class="submenu">
+                    <a href="{{ route('adminorders') }}" class="{{ request()->routeIs('adminorders') && !request()->has('status') ? 'active' : '' }}">
+                        All Orders
+                    </a>
+                    <a href="{{ route('adminorders', ['status' => 'pending']) }}" class="{{ request()->get('status') == 'pending' ? 'active' : '' }}">
+                        Pending Orders
+                    </a>
+                    <a href="{{ route('adminorders', ['status' => 'completed']) }}" class="{{ request()->get('status') == 'completed' ? 'active' : '' }}">
+                        Completed Orders
+                    </a>
+                    <a href="{{ route('adminorders', ['status' => 'cancelled']) }}" class="{{ request()->get('status') == 'cancelled' ? 'active' : '' }}">
+                        Cancelled Orders
+                    </a>
+                </div>
             </li>
-            <li class="menu-item has-submenu"><a class="menu-link" href="page-transactions-1.html"><i
-                        class="icon material-icons md-monetization_on"></i><span class="text">Transactions</span></a>
-                <div class="submenu"><a href="page-transactions-1.html">Transaction 1</a><a
-                        href="page-transactions-2.html">Transaction 2</a><a
-                        href="page-transactions-details.html">Transaction Details</a></div>
+
+            <!-- Customers -->
+            <li class="menu-item {{ request()->routeIs('admincustomers*') ? 'active' : '' }}">
+                <a class="menu-link" href="{{ route('admincustomers') }}">
+                    <i class="icon material-icons md-person"></i>
+                    <span class="text">Customers</span>
+                </a>
             </li>
-            <li class="menu-item has-submenu"><a class="menu-link" href="#"><i
-                        class="icon material-icons md-person"></i><span class="text">Account</span></a>
-                <div class="submenu"><a href="page-account-login.html">User login</a><a
-                        href="page-account-register.html">User registration</a><a href="page-error-404.html">Error
-                        404</a></div>
+
+            <!-- Categories -->
+            <li class="menu-item has-submenu {{ request()->routeIs('admincategories*') ? 'active' : '' }}">
+                <a class="menu-link" href="{{ route('admincategories') }}">
+                    <i class="icon material-icons md-category"></i>
+                    <span class="text">Categories</span>
+                </a>
+                <div class="submenu">
+                    <a href="{{ route('admincategories') }}">Manage Categories</a>
+                    <a href="#" id="addCategoryBtn">Add New Category</a>
+                </div>
             </li>
-            <li class="menu-item"><a class="menu-link" href="page-reviews.html"><i
-                        class="icon material-icons md-comment"></i><span class="text">Reviews</span></a></li>
-            <li class="menu-item"><a class="menu-link" href="page-brands.html"><i
-                        class="icon material-icons md-stars"></i><span class="text">Brands</span></a></li>
-            <li class="menu-item"><a class="menu-link" disabled="" href="#"><i
-                        class="icon material-icons md-pie_chart"></i><span class="text">Statistics</span></a></li>
+
+            <!-- Sliders -->
+            <li class="menu-item {{ request()->routeIs('adminSliders*') ? 'active' : '' }}">
+                <a class="menu-link" href="{{ route('adminSliders') }}">
+                    <i class="icon material-icons md-slideshow"></i>
+                    <span class="text">Sliders</span>
+                </a>
+            </li>
+
+            <!-- Reviews -->
+            <li class="menu-item">
+                <a class="menu-link" href="#">
+                    <i class="icon material-icons md-comment"></i>
+                    <span class="text">Reviews</span>
+                </a>
+            </li>
+
+            <!-- Brands -->
+            <li class="menu-item">
+                <a class="menu-link" href="#">
+                    <i class="icon material-icons md-stars"></i>
+                    <span class="text">Brands</span>
+                </a>
+            </li>
         </ul>
+
         <hr>
+
         <ul class="menu-aside">
-            <li class="menu-item has-submenu"><a class="menu-link" href="#"><i
-                        class="icon material-icons md-settings"></i><span class="text">Settings</span></a>
-                <div class="submenu"><a href="page-settings-1.html">Setting sample 1</a><a
-                        href="page-settings-2.html">Setting sample 2</a></div>
+            <!-- Settings -->
+            <li class="menu-item has-submenu {{ request()->routeIs('adminsettings*') ? 'active' : '' }}">
+                <a class="menu-link" href="{{ route('adminsettings') }}">
+                    <i class="icon material-icons md-settings"></i>
+                    <span class="text">Settings</span>
+                </a>
+                <div class="submenu">
+                    <a href="{{ route('adminsettings') }}">General Settings</a>
+                    <a href="{{ route('adminsettings', ['tab' => 'payment']) }}">Payment Settings</a>
+                    <a href="{{ route('adminsettings', ['tab' => 'shipping']) }}">Shipping Settings</a>
+                </div>
             </li>
-            <li class="menu-item"><a class="menu-link" href="page-blank.html"><i
-                        class="icon material-icons md-local_offer"></i><span class="text"> Starter page</span></a>
+
+            <!-- Statistics -->
+            <li class="menu-item">
+                <a class="menu-link" href="#">
+                    <i class="icon material-icons md-pie_chart"></i>
+                    <span class="text">Statistics</span>
+                </a>
             </li>
         </ul>
     </nav>
 </aside>
-  
-      @yield('admin2')
+
+    @yield('admin2')
 
     <script src="{{ asset('assets/js/vendors/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('assets/js/vendors/bootstrap.bundle.min.js') }}"></script>
@@ -96,5 +169,6 @@
     <script src="{{ asset('assets/js/vendors/chart.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
     <script src="{{ asset('assets/js/custom-chart.js') }}" type="text/javascript"></script>
-  </body>
+</body>
+
 </html>

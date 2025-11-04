@@ -185,7 +185,7 @@ class ProductsController extends Controller
 
             // Web response
             return redirect()
-                ->route('products.index')
+                ->back()
                 ->with('success', 'Product created successfully.');
 
         } catch (Throwable $e) {
