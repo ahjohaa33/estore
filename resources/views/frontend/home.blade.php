@@ -65,7 +65,7 @@
       <!-- Featured Products Wrapper-->
       <x-featured-products />
 
-      
+      <x-checkout />
  
       {{-- <div class="pb-3">
         <div class="container">

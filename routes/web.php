@@ -92,6 +92,10 @@ Route::get('login', [UserController::class, 'index'])->name('userlogin');
 Route::post('auth', [UserController::class, 'login'])->name('authentication');
 
 
+//checkout
+Route::get('/checkout', [AdminController::class, 'checkout'])->name('checkout');
+
+
 //filter routes
 Route::get('filter-products', [ProductsController::class, 'filter'])->name('productfilter');
 

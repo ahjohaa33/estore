@@ -9,12 +9,14 @@
                             <div class="card-body">
 
                                 <!-- Thumbnail -->
-                                <a class="product-thumbnail d-block" href="{{ route('singleproductRoute', $item->name) }}">
-                                <!-- Badge-->
-                                <span class="badge rounded-pill badge-warning">Sale</span>
-                                <!-- Wishlist Button-->
-                                <a class="wishlist-btn" href="#"><i class="ti ti-heart"></i></a>
-                                    <img class="mb-2" style="object-fit: cover;" src="{{ asset('storage') . '/'. ($item->images[2] ?? '') }}" alt="">
+                                <a class="product-thumbnail d-block"
+                                    href="{{ route('singleproductRoute', $item->name) }}">
+                                    <!-- Badge-->
+                                    <span class="badge rounded-pill badge-warning">Sale</span>
+                                    <!-- Wishlist Button-->
+                                    <a class="wishlist-btn" href="#"><i class="ti ti-heart"></i></a>
+                                    <img class="mb-2" style="object-fit: cover;"
+                                        src="{{ asset('storage') . '/' . ($item->images[2] ?? '') }}" alt="">
                                     <!-- Offer Countdown Timer: Please use event time this format: YYYY/MM/DD hh:mm:ss -->
                                     <ul class="offer-countdown-timer d-flex align-items-center shadow-sm"
                                         data-countdown="2024/12/31 23:59:59">
@@ -24,51 +26,56 @@
                                         <li><span class="seconds">0</span>s</li>
                                     </ul>
                                 </a>
-                                <!-- Product Title --><a class="product-title" href="{{ route('singleproductRoute', $item->name) }}">{{ $item->name }}</a>
+                                <!-- Product Title --><a class="product-title"
+                                    href="{{ route('singleproductRoute', $item->name) }}">{{ $item->name }}</a>
                                 <!-- Product Price -->
-                                <p class="sale-price">{{ $item->offer_price }} BDT<span>{{ $item->price }} BDT</span></p>
+                                <p class="sale-price">{{ $item->offer_price }} BDT<span>{{ $item->price }} BDT</span>
+                                </p>
                                 <!-- Rating -->
-                                             <div class="product-rating">
-                                            @php
-                                                $avg = round($item->reviews_avg_rating ?? 0, 1); // 0–5, one decimal
-                                                $full = (int) floor($avg);
-                                                $dec  = $avg - $full;
-                                                // .75+ rounds up to another full star; .25–.74 shows a half
-                                                if ($dec >= 0.75) { $full++; $half = 0; }
-                                                else { $half = ($dec >= 0.25) ? 1 : 0; }
-                                                $empty = 5 - $full - $half;
-                                            @endphp
+                                <div class="d-flex gap-2">
+ <div class="product-rating">
+                                    @php
+                                        $avg = round($item->reviews_avg_rating ?? 0, 1); // 0–5, one decimal
+                                        $full = (int) floor($avg);
+                                        $dec = $avg - $full;
+                                        // .75+ rounds up to another full star; .25–.74 shows a half
+                                        if ($dec >= 0.75) {
+                                            $full++;
+                                            $half = 0;
+                                        } else {
+                                            $half = $dec >= 0.25 ? 1 : 0;
+                                        }
+                                        $empty = 5 - $full - $half;
+                                    @endphp
 
-                                            {{-- full stars --}}
-                                            @for ($i = 0; $i < $full; $i++)
-                                                <i class="ti ti-star-filled"></i>
-                                            @endfor
+                                    {{-- full stars --}}
+                                    @for ($i = 0; $i < $full; $i++)
+                                        <i class="ti ti-star-filled"></i>
+                                    @endfor
 
-                                            {{-- half star --}}
-                                            @if ($half)
-                                                <i class="ti ti-star-half-filled"></i>
-                                            @endif
+                                    {{-- half star --}}
+                                    @if ($half)
+                                        <i class="ti ti-star-half-filled"></i>
+                                    @endif
 
-                                            {{-- empty stars --}}
-                                            @for ($i = 0; $i < $empty; $i++)
-                                                <i class="ti ti-star"></i>
-                                            @endfor
-                                            </div>
+                                    {{-- empty stars --}}
+                                    @for ($i = 0; $i < $empty; $i++)
+                                        <i class="ti ti-star"></i>
+                                    @endfor
+                                </div>
 
-                                            <small class="text-muted">
-                                            ({{ $item->reviews_count }} {{ Str::plural('review', $item->reviews_count) }})
-                                            </small>
-                                             <!-- In your product card/list -->
-                                            <a href="#"
-                                            class="btn btn-primary btn-sm add-to-cart"
-                                            data-url="{{ route('cart.add') }}"
-                                            data-product-id="{{ $item->id }}"
-                                            data-qty="1"
-                                            data-color="{{ $defaultColor ?? '' }}"
-                                            data-size="{{ $defaultSize ?? '' }}"
-                                            aria-label="Add to cart">
-                                            <i class="ti ti-plus"></i>
-                                            </a>
+                                <small class="text-muted">
+                                    ({{ $item->reviews_count }} {{ Str::plural('review', $item->reviews_count) }})
+                                </small>
+                                </div>
+                               
+                                <!-- In your product card/list -->
+                                <a href="#" class="neo-btn" data-url="{{ route('cart.add') }}"
+                                    data-product-id="{{ $item->id }}" data-qty="1"
+                                    data-color="{{ $defaultColor ?? '' }}" data-size="{{ $defaultSize ?? '' }}"
+                                    aria-label="Buy Now">
+                                    Buy Now
+                                </a>
                             </div>
                         </div>
                     @empty

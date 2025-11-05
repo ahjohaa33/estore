@@ -37,6 +37,33 @@
     <!-- Stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
+    <style>
+            .neo-btn {
+        display: inline-block;
+        background: #e5e9f0;
+        /* light bg – adjust if your page is darker */
+        color: #333;
+        padding: 10px 10px;
+        border-radius: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        box-shadow: 6px 6px 14px rgba(163, 177, 198, 0.6),
+            -6px -6px 14px rgba(255, 255, 255, 0.9);
+        transition: all 0.15s ease-in-out;
+        letter-spacing: 0.01em;
+    }
+
+    .neo-btn:hover {
+        box-shadow: inset 4px 4px 10px rgba(163, 177, 198, 0.4),
+            inset -4px -4px 10px rgba(255, 255, 255, 0.9);
+        color: #111;
+    }
+
+    .neo-btn:active {
+        transform: translateY(1px);
+    }
+    </style>
+
 
 </head>
 
@@ -91,7 +118,7 @@
         });
     </script>
 
-    <script>
+    {{-- <script>
         (function() {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
@@ -170,7 +197,60 @@
                 }
             });
         })();
-    </script>
+    </script> --}}
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // delegate in case of multiple buttons
+    document.body.addEventListener('click', async function (e) {
+        const btn = e.target.closest('.neo-btn');
+        if (!btn) return;
+        e.preventDefault();
+
+        const url   = btn.dataset.url;
+        const id    = btn.dataset.productId;
+        const qty   = btn.dataset.qty || 1;
+        const color = btn.dataset.color || '';
+        const size  = btn.dataset.size || '';
+
+        // get csrf from meta if you have <meta name="csrf-token" content="...">
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
+                },
+                body: new URLSearchParams({
+                    product_id: id,
+                    qty: qty,
+                    color: color,
+                    size: size
+                })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                // cart added successfully
+                // 1) toast if you have toastr
+                // toastr.success(data.message || 'Added to cart');
+
+                // 2) go to checkout
+                window.location.href = '/checkout';
+            } else {
+                alert(data.message || 'Something went wrong while adding to cart.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error.');
+        }
+    });
+});
+</script>
+
 
 </body>
 

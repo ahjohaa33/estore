@@ -35,4 +35,8 @@ class AdminController extends Controller
     public function sliders(){
         return view('admin.slideradmin');
     }
+
+    public function checkout(){
+        return view('admin.checkout');
+    }
 }

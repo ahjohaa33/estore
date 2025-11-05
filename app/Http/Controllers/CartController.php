@@ -8,49 +8,12 @@ use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Support\HandlesCart;
 
 class CartController extends Controller
 {
-    // Ensures we always have a cart & cookie
-    protected function getCart(Request $request): Cart
-    {
-        $token = $request->cookie('cart_token');
 
-        if ($token) {
-            $cart = Cart::firstOrCreate(['token' => $token], ['currency' => 'BDT']);
-        } else {
-            $cart = Cart::create(['currency' => 'BDT']);
-            cookie()->queue(cookie()->forever(
-                name: 'cart_token',
-                value: $cart->token,
-                path: '/',
-                domain: null,
-                secure: app()->environment('production'),
-                httpOnly: true,
-                raw: false,
-                sameSite: 'Lax'
-            ));
-        }
-
-        // Attach user if logged in
-        if (auth()->check() && !$cart->user_id) {
-            $cart->user_id = auth()->id();
-            $cart->save();
-        }
-
-        return $cart;
-    }
-
-    // Decide effective price from your product schema
-    protected function resolvePrice(Products $p): float
-    {
-        $now = now();
-        if ($p->offer_price ) {
-           
-            return (float) $p->offer_price;
-        }
-        return (float) $p->price;
-    }
+    use HandlesCart;
 
     // GET /cart
     public function show(Request $request)
@@ -157,4 +120,7 @@ class CartController extends Controller
         $cart->items()->delete();
         return response()->json(['message'=>'Cleared','totals'=>$cart->refresh()->totals()]);
     }
+
+
+
 }
