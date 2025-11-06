@@ -73,6 +73,7 @@ class CartController extends Controller
         }
 
         return response()->json([
+            'status'   => 'success',
             'message' => 'Added to cart',
             'cart_id' => $cart->id,
             'item_id' => $item->id,
@@ -106,7 +107,7 @@ class CartController extends Controller
     }
 
     // DELETE /cart/item/{item}
-    public function remove(Request $request, CartItem $item)
+    public function remove(Request $request, CartItems $item)
     {
         $item->delete();
         $cart = $this->getCart($request)->load('items');

@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrdersController;
 use App\Models\Category;
 use App\Models\Slider;
 use App\Models\Products;
@@ -92,8 +93,15 @@ Route::get('login', [UserController::class, 'index'])->name('userlogin');
 Route::post('auth', [UserController::class, 'login'])->name('authentication');
 
 
+
+
 //checkout
 Route::get('/checkout', [AdminController::class, 'checkout'])->name('checkout');
+
+Route::get('/checkout/success/{id}', [OrdersController::class, 'success'])->name('ordersuccess');
+
+//order
+Route::post('/order/place', [OrdersController::class, 'store'])->name('placeorder');
 
 
 //filter routes

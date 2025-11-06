@@ -37,6 +37,6 @@ class AdminController extends Controller
     }
 
     public function checkout(){
-        return view('admin.checkout');
+        return view('admin.checkoutpage');
     }
 }
