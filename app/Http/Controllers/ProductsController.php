@@ -38,184 +38,251 @@ class ProductsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     // ---------- DEBUG: raw incoming ----------
+    //     Log::info('Incoming Product Request (raw)', $request->all());
+
+    //     // ---- Helpers (inline closures) ----
+    //     $parseJsonishArray = function ($value) {
+    //         // Accept array directly
+    //         if (is_array($value)) {
+    //             return array_values(array_unique(array_filter(array_map(
+    //                 fn($v) => is_string($v) ? trim($v) : $v,
+    //                 $value
+    //             ), fn($v) => $v !== '' && $v !== null)));
+    //         }
+
+    //         // Try JSON
+    //         if (is_string($value)) {
+    //             $trim = trim($value);
+    //             if ($trim !== '') {
+    //                 // Try strict JSON first
+    //                 $decoded = json_decode($trim, true);
+    //                 if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+    //                     return array_values(array_unique(array_filter(array_map(
+    //                         fn($v) => is_string($v) ? trim($v) : $v,
+    //                         $decoded
+    //                     ), fn($v) => $v !== '' && $v !== null)));
+    //                 }
+    //                 // Fallback: comma-separated list
+    //                 $parts = array_map('trim', explode(',', $trim));
+    //                 $parts = array_values(array_unique(array_filter($parts, fn($v) => $v !== '')));
+    //                 return $parts ?: null;
+    //             }
+    //         }
+
+    //         return null; // keep null if empty/invalid
+    //     };
+
+    //     $bool01 = function ($value, $default = 0) {
+    //         // Accept 1/0, "1"/"0", true/false, "true"/"false", on/off, yes/no
+    //         if (is_bool($value)) return $value ? 1 : 0;
+
+    //         // PHP filter handles many string forms
+    //         $v = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    //         if ($v === null) {
+    //             // Try numeric forms
+    //             if ($value === 1 || $value === '1') return 1;
+    //             if ($value === 0 || $value === '0') return 0;
+    //             return $default ? 1 : 0;
+    //         }
+    //         return $v ? 1 : 0;
+    //     };
+
+    //     $intOrNull = fn($v) => is_numeric($v) ? (int)$v : null;
+    //     $floatOrNull = fn($v) => is_numeric($v) ? (float)$v : null;
+
+    //     // ---- Gentle normalization (no hard validation) ----
+    //     $name           = trim((string) $request->input('name', ''));
+    //     $category       = trim((string) $request->input('category', ''));
+    //     $price          = $floatOrNull($request->input('price'));
+    //     $offer_price    = $floatOrNull($request->input('offer_price'));
+    //     $offer_duration = $request->input('offer_duration'); // keep raw; DB cast can handle or store string
+
+    //     // If offer_price > price, keep but you can also auto-correct or null it
+    //     // $offer_price = ($offer_price !== null && $price !== null && $offer_price >= $price) ? null : $offer_price;
+
+    //     $color          = $parseJsonishArray($request->input('color'));
+    //     $size           = $parseJsonishArray($request->input('size'));
+
+    //     $specification  = $request->input('specification'); // string or null
+    //     $is_fav         = $bool01($request->input('is_fav', 0), 0);
+    //     $in_stock       = $intOrNull($request->input('in_stock')) ?? 0;
+    //     $is_featured    = $bool01($request->input('is_featured', 0), 0); // <— robust
+    //     $status         = $request->input('status', 'active'); // default
+    //     $sale_count     = $intOrNull($request->input('sale_count')) ?? 0;
+
+    //     // ---------- DEBUG: normalized ----------
+    //     Log::info('Normalized Product Payload (pre-upload)', [
+    //         'name'           => $name,
+    //         'category'       => $category,
+    //         'price'          => $price,
+    //         'offer_price'    => $offer_price,
+    //         'offer_duration' => $offer_duration,
+    //         'color'          => $color,        // expect array or null
+    //         'size'           => $size,         // expect array or null
+    //         'specification'  => $specification,
+    //         'is_fav'         => $is_fav,       // 0/1
+    //         'in_stock'       => $in_stock,
+    //         'is_featured'    => $is_featured,  // 0/1
+    //         'status'         => $status,
+    //         'sale_count'     => $sale_count,
+    //     ]);
+
+    //     $uploadedImages = [];
+
+    //     try {
+    //         DB::beginTransaction();
+
+    //         // ---- Images ----
+    //         if ($request->hasFile('images')) {
+    //             foreach ((array) $request->file('images') as $file) {
+    //                 if ($file && $file->isValid()) {
+    //                     $uploadedImages[] = $file->store('products', 'public');
+    //                 }
+    //             }
+    //         }
+
+    //         // ---- Build payload for DB ----
+    //         $payload = [
+    //             'name'           => $name ?: 'Untitled Product',
+    //             'category'       => $category ?: null,
+    //             'price'          => $price ?? 0.0,
+    //             'offer_price'    => $offer_price,
+    //             'offer_duration' => $offer_duration ? (string) $offer_duration : null,
+
+    //             // Arrays → rely on $casts in model (see note below)
+    //             'color'          => $color,   // array|null
+    //             'size'           => $size,    // array|null
+
+    //             'specification'  => $specification ?: null,
+    //             'is_fav'         => $is_fav,        // 0/1
+    //             'in_stock'       => $in_stock,
+    //             'is_featured'    => $is_featured,   // 0/1
+    //             'status'         => in_array($status, ['active','draft','inactive','outofstock'], true) ? $status : 'active',
+    //             'sale_count'     => $sale_count,
+
+    //             // Save images array (model cast to json/array)
+    //             'images'         => !empty($uploadedImages) ? $uploadedImages : null,
+    //         ];
+
+    //         // ---------- DEBUG: final payload ----------
+    //         Log::info('Final Product Payload (to DB)', $payload);
+
+    //         $product = Products::create($payload);
+
+    //         DB::commit();
+
+    //         // JSON response (AJAX)
+    //         if ($request->expectsJson() || $request->wantsJson()) {
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'message' => 'Product created successfully.',
+    //                 'data'    => $product->fresh(),
+    //             ], 201);
+    //         }
+
+    //         // Web response
+    //         return redirect()
+    //             ->back()
+    //             ->with('success', 'Product created successfully.');
+
+    //     } catch (Throwable $e) {
+    //         DB::rollBack();
+
+    //         // Cleanup uploaded files on error
+    //         foreach ($uploadedImages as $path) {
+    //             Storage::disk('public')->delete($path);
+    //         }
+
+    //         Log::error('Product creation failed', [
+    //             'error'   => $e->getMessage(),
+    //             'trace'   => $e->getTraceAsString(),
+    //             'user_id' => optional($request->user())->id,
+    //         ]);
+
+    //         if ($request->expectsJson() || $request->wantsJson()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Failed to create product. Please try again later.',
+    //                 'error'   => config('app.debug') ? $e->getMessage() : null,
+    //             ], 500);
+    //         }
+
+    //         return redirect()
+    //             ->back()
+    //             ->withInput()
+    //             ->with('error', 'Failed to create product. Please try again later.');
+    //     }
+    // }
+
     public function store(Request $request)
-    {
-        // ---------- DEBUG: raw incoming ----------
-        Log::info('Incoming Product Request (raw)', $request->all());
+{
+    $requestId = uniqid('prod_', true);
+    Log::info("[$requestId] Product creation started");
 
-        // ---- Helpers (inline closures) ----
-        $parseJsonishArray = function ($value) {
-            // Accept array directly
-            if (is_array($value)) {
-                return array_values(array_unique(array_filter(array_map(
-                    fn($v) => is_string($v) ? trim($v) : $v,
-                    $value
-                ), fn($v) => $v !== '' && $v !== null)));
-            }
+    try {
+        DB::beginTransaction();
 
-            // Try JSON
-            if (is_string($value)) {
-                $trim = trim($value);
-                if ($trim !== '') {
-                    // Try strict JSON first
-                    $decoded = json_decode($trim, true);
-                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                        return array_values(array_unique(array_filter(array_map(
-                            fn($v) => is_string($v) ? trim($v) : $v,
-                            $decoded
-                        ), fn($v) => $v !== '' && $v !== null)));
-                    }
-                    // Fallback: comma-separated list
-                    $parts = array_map('trim', explode(',', $trim));
-                    $parts = array_values(array_unique(array_filter($parts, fn($v) => $v !== '')));
-                    return $parts ?: null;
-                }
-            }
-
-            return null; // keep null if empty/invalid
-        };
-
-        $bool01 = function ($value, $default = 0) {
-            // Accept 1/0, "1"/"0", true/false, "true"/"false", on/off, yes/no
-            if (is_bool($value)) return $value ? 1 : 0;
-
-            // PHP filter handles many string forms
-            $v = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-            if ($v === null) {
-                // Try numeric forms
-                if ($value === 1 || $value === '1') return 1;
-                if ($value === 0 || $value === '0') return 0;
-                return $default ? 1 : 0;
-            }
-            return $v ? 1 : 0;
-        };
-
-        $intOrNull = fn($v) => is_numeric($v) ? (int)$v : null;
-        $floatOrNull = fn($v) => is_numeric($v) ? (float)$v : null;
-
-        // ---- Gentle normalization (no hard validation) ----
-        $name           = trim((string) $request->input('name', ''));
-        $category       = trim((string) $request->input('category', ''));
-        $price          = $floatOrNull($request->input('price'));
-        $offer_price    = $floatOrNull($request->input('offer_price'));
-        $offer_duration = $request->input('offer_duration'); // keep raw; DB cast can handle or store string
-
-        // If offer_price > price, keep but you can also auto-correct or null it
-        // $offer_price = ($offer_price !== null && $price !== null && $offer_price >= $price) ? null : $offer_price;
-
-        $color          = $parseJsonishArray($request->input('color'));
-        $size           = $parseJsonishArray($request->input('size'));
-
-        $specification  = $request->input('specification'); // string or null
-        $is_fav         = $bool01($request->input('is_fav', 0), 0);
-        $in_stock       = $intOrNull($request->input('in_stock')) ?? 0;
-        $is_featured    = $bool01($request->input('is_featured', 0), 0); // <— robust
-        $status         = $request->input('status', 'active'); // default
-        $sale_count     = $intOrNull($request->input('sale_count')) ?? 0;
-
-        // ---------- DEBUG: normalized ----------
-        Log::info('Normalized Product Payload (pre-upload)', [
-            'name'           => $name,
-            'category'       => $category,
-            'price'          => $price,
-            'offer_price'    => $offer_price,
-            'offer_duration' => $offer_duration,
-            'color'          => $color,        // expect array or null
-            'size'           => $size,         // expect array or null
-            'specification'  => $specification,
-            'is_fav'         => $is_fav,       // 0/1
-            'in_stock'       => $in_stock,
-            'is_featured'    => $is_featured,  // 0/1
-            'status'         => $status,
-            'sale_count'     => $sale_count,
-        ]);
-
-        $uploadedImages = [];
-
-        try {
-            DB::beginTransaction();
-
-            // ---- Images ----
-            if ($request->hasFile('images')) {
-                foreach ((array) $request->file('images') as $file) {
-                    if ($file && $file->isValid()) {
-                        $uploadedImages[] = $file->store('products', 'public');
-                    }
-                }
-            }
-
-            // ---- Build payload for DB ----
-            $payload = [
-                'name'           => $name ?: 'Untitled Product',
-                'category'       => $category ?: null,
-                'price'          => $price ?? 0.0,
-                'offer_price'    => $offer_price,
-                'offer_duration' => $offer_duration ? (string) $offer_duration : null,
-
-                // Arrays → rely on $casts in model (see note below)
-                'color'          => $color,   // array|null
-                'size'           => $size,    // array|null
-
-                'specification'  => $specification ?: null,
-                'is_fav'         => $is_fav,        // 0/1
-                'in_stock'       => $in_stock,
-                'is_featured'    => $is_featured,   // 0/1
-                'status'         => in_array($status, ['active','draft','inactive','outofstock'], true) ? $status : 'active',
-                'sale_count'     => $sale_count,
-
-                // Save images array (model cast to json/array)
-                'images'         => !empty($uploadedImages) ? $uploadedImages : null,
-            ];
-
-            // ---------- DEBUG: final payload ----------
-            Log::info('Final Product Payload (to DB)', $payload);
-
-            $product = Products::create($payload);
-
-            DB::commit();
-
-            // JSON response (AJAX)
-            if ($request->expectsJson() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Product created successfully.',
-                    'data'    => $product->fresh(),
-                ], 201);
-            }
-
-            // Web response
-            return redirect()
-                ->back()
-                ->with('success', 'Product created successfully.');
-
-        } catch (Throwable $e) {
-            DB::rollBack();
-
-            // Cleanup uploaded files on error
-            foreach ($uploadedImages as $path) {
-                Storage::disk('public')->delete($path);
-            }
-
-            Log::error('Product creation failed', [
-                'error'   => $e->getMessage(),
-                'trace'   => $e->getTraceAsString(),
-                'user_id' => optional($request->user())->id,
-            ]);
-
-            if ($request->expectsJson() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to create product. Please try again later.',
-                    'error'   => config('app.debug') ? $e->getMessage() : null,
-                ], 500);
-            }
-
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('error', 'Failed to create product. Please try again later.');
+        // Minimal validation
+        $name = trim($request->input('name'));
+        if (empty($name)) {
+            return response()->json(['error' => 'Product name required'], 422);
         }
+
+        // Upload images immediately
+        $uploadedImages = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                if ($file->isValid()) {
+                    $uploadedImages[] = $file->store('products', 'public');
+                }
+            }
+        }
+
+        // Prepare payload
+        $toBool = fn($v) => filter_var($v, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+        
+        $payload = [
+            'name' => $name,
+            'category' => trim($request->input('category', '')),
+            'price' => is_numeric($request->input('price')) ? (float)$request->input('price') : 0.0,
+            'offer_price' => is_numeric($request->input('offer_price')) ? (float)$request->input('offer_price') : null,
+            'offer_duration' => $request->input('offer_duration'),
+            'color' => $request->input('color'),
+            'size' => $request->input('size'),
+            'specification' => $request->input('specification'),
+            'is_fav' => $toBool($request->input('is_fav', 0)),
+            'in_stock' => (int)($request->input('in_stock', 0)),
+            'is_featured' => $toBool($request->input('is_featured', 0)),
+            'status' => $request->input('status', 'active'),
+            'sale_count' => (int)($request->input('sale_count', 0)),
+            'images' => $uploadedImages, // Use uploaded images
+        ];
+
+        // Create product
+        $product = Products::create($payload);
+        Log::info("[$requestId] Product created", ['id' => $product->id]);
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product created successfully',
+            'data' => $product,
+        ], 201);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error("[$requestId] Product creation failed", ['error' => $e->getMessage()]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Product creation failed'
+        ], 500);
     }
+}
 
     /**
      * Display the specified resource.
