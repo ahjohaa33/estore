@@ -732,29 +732,33 @@
 </script> --}}
 
 <script>
-$(document).ready(function() {
-    const form = $('#addProductForm');
-    const submitBtn = $('#submitProductBtn');
-    const fileInput = form.find('input[name="images[]"]');
-    const previewContainer = $('<div id="imagePreviewContainer" class="mt-3 d-flex flex-wrap gap-2"></div>');
-    fileInput.after(previewContainer);
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('addProductForm');
+    const submitBtn = document.getElementById('submitProductBtn');
+    const fileInput = form.querySelector('input[name="images[]"]');
 
-    // Initialize Toastr (if not already)
+    // Create preview container
+    const previewContainer = document.createElement('div');
+    previewContainer.id = 'imagePreviewContainer';
+    previewContainer.classList.add('mt-3', 'd-flex', 'flex-wrap', 'gap-2');
+    fileInput.insertAdjacentElement('afterend', previewContainer);
+
+    // Toastr configuration (assuming toastr.js is loaded)
     toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "timeOut": "4000",
-        "positionClass": "toast-top-right"
+        closeButton: true,
+        progressBar: true,
+        timeOut: 4000,
+        positionClass: "toast-top-right"
     };
 
-    // ---- Image Preview (max 5 images) ----
-    fileInput.on('change', function(e) {
+    // ---------- Image Preview ----------
+    fileInput.addEventListener('change', (e) => {
         const files = e.target.files;
-        previewContainer.empty();
+        previewContainer.innerHTML = '';
 
         if (files.length > 5) {
             toastr.warning('You can upload a maximum of 5 images.');
-            fileInput.val(''); // reset
+            fileInput.value = '';
             return;
         }
 
@@ -762,67 +766,69 @@ $(document).ready(function() {
             if (!file.type.startsWith('image/')) return;
 
             const reader = new FileReader();
-            reader.onload = function(ev) {
-                const img = $('<img>')
-                    .attr('src', ev.target.result)
-                    .css({
-                        width: '80px',
-                        height: '80px',
-                        objectFit: 'cover',
-                        borderRadius: '8px',
-                        border: '1px solid #ccc'
-                    });
-                previewContainer.append(img);
+            reader.onload = (ev) => {
+                const img = document.createElement('img');
+                img.src = ev.target.result;
+                img.style.width = '80px';
+                img.style.height = '80px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '8px';
+                img.style.border = '1px solid #ccc';
+                previewContainer.appendChild(img);
             };
             reader.readAsDataURL(file);
         });
     });
 
-    // ---- Submit form via AJAX ----
-    form.on('submit', function(e) {
+    // ---------- Submit Form ----------
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // prevent double submit
-        if (submitBtn.prop('disabled')) return;
+        if (submitBtn.disabled) return; // prevent double submit
 
-        submitBtn.prop('disabled', true).text('Saving...');
+        submitBtn.disabled = true;
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Saving...';
 
-        const formData = new FormData(this);
+        const formData = new FormData(form);
 
-        $.ajax({
-            url: "{{ route('createproduct') }}",
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            cache: false,
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    toastr.success('Product created successfully!');
-                    
-                    // reset form & modal
-                    form.trigger('reset');
-                    previewContainer.empty();
-                    $('#addProductModal').modal('hide');
+        try {
+            const response = await fetch("{{ route('createproduct') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value
+                },
+                body: formData
+            });
 
-                    // reload page after a short delay
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    toastr.error(response.message || 'Failed to create product.');
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                toastr.success('Product created successfully!');
+
+                // reset form & preview
+                form.reset();
+                previewContainer.innerHTML = '';
+
+                // close modal (Bootstrap 5)
+                const modalEl = document.getElementById('addProductModal');
+                if (modalEl) {
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInstance) modalInstance.hide();
                 }
-            },
-            error: function(xhr) {
-                let msg = 'An error occurred while saving the product.';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    msg = xhr.responseJSON.message;
-                }
-                toastr.error(msg);
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).text('Add Product');
+
+                // reload page
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                toastr.error(data.message || 'Failed to create product.');
             }
-        });
+        } catch (err) {
+            toastr.error('An error occurred while saving the product.');
+            console.error(err);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
     });
 });
 </script>
