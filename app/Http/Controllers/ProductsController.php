@@ -218,71 +218,79 @@ class ProductsController extends Controller
     // }
 
     public function store(Request $request)
-{
-    $requestId = uniqid('prod_', true);
-    Log::info("[$requestId] Product creation started");
+    {
+        // Basic validation
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'images.*' => 'nullable|file|image|max:5120', // max 5MB per image
+        ]);
 
-    try {
+        $savedFiles = [];
+
         DB::beginTransaction();
 
-        // Minimal validation
-        $name = trim($request->input('name'));
-        if (empty($name)) {
-            return response()->json(['error' => 'Product name required'], 422);
-        }
-
-        // Upload images immediately
-        $uploadedImages = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $file) {
-                if ($file->isValid()) {
-                    $uploadedImages[] = $file->store('products', 'public');
+        try {
+            // --- 1. Handle image uploads ---
+            $imagePaths = [];
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    $path = $file->store('products', 'public');
+                    $imagePaths[] = $path;
+                    $savedFiles[] = $path; // remember for potential rollback
                 }
             }
+
+            // --- 2. Create product (casts handle array fields automatically) ---
+            $product = Product::create([
+                'name' => $request->input('name'),
+                'images' => $imagePaths,                 // cast → array
+                'color' => (array) $request->input('color', []),  // cast → array
+                'size' => (array) $request->input('size', []),    // cast → array
+                'category' => $request->input('category'),
+                'price' => $request->input('price'),
+                'offer_price' => $request->input('offer_price'),
+                'offer_duration' => $request->input('offer_duration'),
+                'specification' => $request->input('specification'),
+                'in_stock' => $request->input('in_stock', 0),
+                'is_featured' => $request->boolean('is_featured', false),
+                'status' => $request->input('status', 'active'),
+            ]);
+
+            // --- 3. Commit transaction ---
+            DB::commit();
+
+            // --- 4. Respond ---
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'product' => $product]);
+            }
+
+            return redirect()->route('products.index')
+                ->with('success', 'Product created successfully.');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            // --- 5. Cleanup uploaded files on failure ---
+            foreach ($savedFiles as $path) {
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+
+            Log::error('Product creation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Failed to create product'], 500);
+            }
+
+            return back()->withErrors(['error' => 'Failed to create product.'])->withInput();
         }
-
-        // Prepare payload
-        $toBool = fn($v) => filter_var($v, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
-        
-        $payload = [
-            'name' => $name,
-            'category' => trim($request->input('category', '')),
-            'price' => is_numeric($request->input('price')) ? (float)$request->input('price') : 0.0,
-            'offer_price' => is_numeric($request->input('offer_price')) ? (float)$request->input('offer_price') : null,
-            'offer_duration' => $request->input('offer_duration'),
-            'color' => $request->input('color'),
-            'size' => $request->input('size'),
-            'specification' => $request->input('specification'),
-            'is_fav' => $toBool($request->input('is_fav', 0)),
-            'in_stock' => (int)($request->input('in_stock', 0)),
-            'is_featured' => $toBool($request->input('is_featured', 0)),
-            'status' => $request->input('status', 'active'),
-            'sale_count' => (int)($request->input('sale_count', 0)),
-            'images' => $uploadedImages, // Use uploaded images
-        ];
-
-        // Create product
-        $product = Products::create($payload);
-        Log::info("[$requestId] Product created", ['id' => $product->id]);
-
-        DB::commit();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Product created successfully',
-            'data' => $product,
-        ], 201);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error("[$requestId] Product creation failed", ['error' => $e->getMessage()]);
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Product creation failed'
-        ], 500);
     }
-}
+
 
     /**
      * Display the specified resource.

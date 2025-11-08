@@ -378,7 +378,7 @@
 </main>
 
 <!-- JavaScript -->
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         // CSRF token for AJAX requests
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -729,7 +729,104 @@
             });
         }
     }
+</script> --}}
+
+<script>
+$(document).ready(function() {
+    const form = $('#addProductForm');
+    const submitBtn = $('#submitProductBtn');
+    const fileInput = form.find('input[name="images[]"]');
+    const previewContainer = $('<div id="imagePreviewContainer" class="mt-3 d-flex flex-wrap gap-2"></div>');
+    fileInput.after(previewContainer);
+
+    // Initialize Toastr (if not already)
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "timeOut": "4000",
+        "positionClass": "toast-top-right"
+    };
+
+    // ---- Image Preview (max 5 images) ----
+    fileInput.on('change', function(e) {
+        const files = e.target.files;
+        previewContainer.empty();
+
+        if (files.length > 5) {
+            toastr.warning('You can upload a maximum of 5 images.');
+            fileInput.val(''); // reset
+            return;
+        }
+
+        Array.from(files).forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const img = $('<img>')
+                    .attr('src', ev.target.result)
+                    .css({
+                        width: '80px',
+                        height: '80px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        border: '1px solid #ccc'
+                    });
+                previewContainer.append(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // ---- Submit form via AJAX ----
+    form.on('submit', function(e) {
+        e.preventDefault();
+
+        // prevent double submit
+        if (submitBtn.prop('disabled')) return;
+
+        submitBtn.prop('disabled', true).text('Saving...');
+
+        const formData = new FormData(this);
+
+        $.ajax({
+            url: "{{ route('createproduct') }}",
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    toastr.success('Product created successfully!');
+                    
+                    // reset form & modal
+                    form.trigger('reset');
+                    previewContainer.empty();
+                    $('#addProductModal').modal('hide');
+
+                    // reload page after a short delay
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    toastr.error(response.message || 'Failed to create product.');
+                }
+            },
+            error: function(xhr) {
+                let msg = 'An error occurred while saving the product.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                toastr.error(msg);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).text('Add Product');
+            }
+        });
+    });
+});
 </script>
+
 
 <!-- Add some custom CSS for better responsiveness -->
 <style>
