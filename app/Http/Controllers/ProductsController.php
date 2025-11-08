@@ -241,8 +241,8 @@ class ProductsController extends Controller
                 }
             }
 
-            // --- 2. Create product (casts handle array fields automatically) ---
-            $product = Product::create([
+            
+            $product = Products::create([
                 'name' => $request->input('name'),
                 'images' => $imagePaths,                 // cast → array
                 'color' => (array) $request->input('color', []),  // cast → array
@@ -265,7 +265,7 @@ class ProductsController extends Controller
                 return response()->json(['success' => true, 'product' => $product]);
             }
 
-            return redirect()->route('products.index')
+            return redirect()->route('products2')
                 ->with('success', 'Product created successfully.');
 
         } catch (\Throwable $e) {
