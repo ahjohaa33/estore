@@ -206,6 +206,13 @@
                 if (!btn) return;
                 e.preventDefault();
 
+                // save original content to restore on error
+                const originalHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.classList.add('opacity-75', 'pointer-events-none'); // optional visual
+                btn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+
                 const url = btn.dataset.url;
                 const id = btn.dataset.productId;
                 const qty = btn.dataset.qty || 1;
@@ -232,37 +239,42 @@
                     });
 
                     let data = {};
-                    // try to read JSON if possible
                     const ct = res.headers.get('content-type') || '';
                     if (ct.includes('application/json')) {
                         data = await res.json();
                     }
 
-                    // CASE 1: your add-to-cart API returned {success:true}
-                    if (data.status == 'success') {
+                    // CASE 1: JSON success
+                    if (data.status === 'success') {
                         window.location.href = "{{ route('checkout') }}";
                         return;
                     }
 
-                    // CASE 2: route returned HTML / redirect (common in Laravel)
-                    // in this case just push the user to checkout anyway
+                    // CASE 2: HTML/redirect response but OK
                     if (res.ok && !ct.includes('application/json')) {
                         window.location.href = "{{ route('checkout') }}";
                         return;
                     }
 
+                    // error from server
                     alert(data.message || 'Something went wrong while adding to cart.');
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75', 'pointer-events-none');
+                    btn.innerHTML = originalHtml;
+
                 } catch (err) {
                     console.error(err);
-                    // even on error you can still send user to checkout if you want:
-                    // window.location.href = "{{ route('checkout') }}";
                     alert('Network error.');
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75', 'pointer-events-none');
+                    btn.innerHTML = originalHtml;
                 }
             });
         });
     </script>
 
-@stack('scripts')
+
+    @stack('scripts')
 
 </body>
 

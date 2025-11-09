@@ -21,4 +21,13 @@ class Cart extends Model
         $subtotal = (float) $this->items->sum(fn($i) => $i->qty * $i->unit_price);
         return ['subtotal'=>$subtotal, 'discount'=>0.0, 'shipping'=>0.0, 'tax'=>0.0, 'total'=>$subtotal];
     }
+
+    // App/Models/Cart.php
+
+    public function itemCount(): int
+    {
+        // total quantity in cart
+        return (int) $this->items()->sum('qty');
+    }
+
 }

@@ -19,7 +19,7 @@ class CartController extends Controller
     public function show(Request $request)
     {
         $cart = $this->getCart($request)->load('items.product');
-        return view('cart.show', [
+        return view('frontend.checkoutpage', [
             'cart' => $cart,
             'totals' => $cart->totals(),
         ]);
@@ -86,6 +86,7 @@ class CartController extends Controller
                 'size'        => $item->size,
             ],
             'totals'  => $cart->refresh()->totals(),
+            'cart_count'=> $cart->items()->sum('qty'),
         ]);
     }
 

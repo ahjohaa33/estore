@@ -5,9 +5,26 @@
         <div class="logo-wrapper"><a style="text-decoration: none; font-size: 24px;" href="{{ route('homeroute') }}">{{ config('app.name') }}</a></div>
         <div class="navbar-logo-container d-flex align-items-center">
           <!-- Cart Icon -->
-          <div class="cart-icon-wrap"><a href="cart.html"><i class="ti ti-basket-bolt"></i><span>13</span></a></div>
+          <div class="cart-icon-wrap"><a href="{{ route('cart.show') }}"><i class="ti ti-basket-bolt"></i><span style="background-color: red;">{{ $globalCartCount ?? 0 }}</span></a></div>
           <!-- User Profile Icon -->
-          <div class="user-profile-icon ms-2"><a href="profile.html"><img src="img/bg-img/9.jpg" alt=""></a></div>
+         <div class="user-profile-icon ms-2">
+    @auth
+        <a href="#">
+            <img
+                src="{{ auth()->user()->avatar ? asset(auth()->user()->avatar) : asset('img/avatar-placeholder.png') }}"
+                alt="{{ auth()->user()->name }}"
+                style="object-fit:fill;border-radius:50%;">
+        </a>
+    @else
+        <a href="{{ route('userlogin') }}">
+            <img
+                src="{{ asset('img/avatar-placeholder.png') }}"
+                alt="Guest"
+                style="object-fit:fill;border-radius:50%;">
+        </a>
+    @endauth
+</div>
+
           <!-- Navbar Toggler -->
           <div class="suha-navbar-toggler ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaOffcanvas" aria-controls="suhaOffcanvas">
             <div><span></span><span></span><span></span></div>

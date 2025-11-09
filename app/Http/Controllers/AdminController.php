@@ -32,11 +32,19 @@ class AdminController extends Controller
         return view('admin.settings');
     }
 
+    public function settinguser(){
+        return view('frontend.settings');
+    }
+
     public function sliders(){
         return view('admin.slideradmin');
     }
 
     public function checkout(){
-        return view('admin.checkoutpage');
+        return view('frontend.checkoutpage');
+    }
+
+    public function shop(){
+        return view('frontend.shop');
     }
 }

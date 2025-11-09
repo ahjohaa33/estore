@@ -92,7 +92,14 @@ Route::prefix('cart')->group(function(){
 Route::get('login', [UserController::class, 'index'])->name('userlogin');
 Route::post('auth', [UserController::class, 'login'])->name('authentication');
 
+//profile
+Route::get('user/profile', [UserController::class, 'show'])->name('userprofile');
 
+//settings
+Route::get('settings', [AdminController::class, 'settinguser'])->name('settingsroute');
+
+//shop
+Route::get('shop', [AdminController::class, 'shop'])->name('shop');
 
 
 //checkout
