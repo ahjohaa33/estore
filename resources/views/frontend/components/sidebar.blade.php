@@ -34,12 +34,12 @@
     <ul class="sidenav-nav ps-0">
       @auth
         <li>
-          <a href="{{ route('profile') }}">
+          <a href="{{ route('userprofile') }}">
             <i class="ti ti-user"></i> My Profile
           </a>
         </li>
         <li>
-          <a href="{{ route('notifications') }}">
+          <a href="">
             <i class="ti ti-bell-ringing lni-tada-effect"></i> Notifications
             {{-- optional badge --}}
             {{-- <span class="ms-1 badge badge-warning">3</span> --}}
@@ -49,17 +49,17 @@
           <a href="#"><i class="ti ti-building-store"></i>Shop</a>
         </li>
         <li>
-          <a href="{{ route('wishlist') }}">
+          <a href="">
             <i class="ti ti-heart"></i> My Wishlist
           </a>
         </li>
         <li>
-          <a href="{{ route('settings') }}">
+          <a href="{{ route('settingsroute') }}">
             <i class="ti ti-adjustments-horizontal"></i> Settings
           </a>
         </li>
         <li>
-          <form action="{{ route('logout') }}" method="POST" class="d-inline">
+          <form action="" method="POST" class="d-inline">
             @csrf
             <button type="submit" class="bg-transparent border-0 text-start w-100 px-0 d-flex align-items-center gap-2 text-white">
               <i class="ti ti-logout"></i> Sign Out
@@ -70,12 +70,12 @@
 
       @guest
         <li>
-          <a href="{{ route('login') }}">
+          <a href="{{ route('userlogin') }}">
             <i class="ti ti-login"></i> Sign In
           </a>
         </li>
         <li>
-          <a href="{{ route('register') }}">
+          <a href="">
             <i class="ti ti-user-plus"></i> Create Account
           </a>
         </li>

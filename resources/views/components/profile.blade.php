@@ -118,18 +118,18 @@
               <i class="ti ti-star-filled"></i><span>My Orders</span>
             </div>
             <div class="data-content">
-              <a class="btn btn-primary btn-sm" href="{{ route('orders.index') }}">View Status</a>
+              <a class="btn btn-primary btn-sm" href="">View Status</a>
             </div>
           </div>
 
           {{-- Edit Profile --}}
           <div class="edit-profile-btn mt-3">
             @if($user)
-              <a class="btn btn-primary btn-lg w-100" href="{{ route('profile.edit') }}">
+              <a class="btn btn-primary btn-lg w-100" href="{{ route('userprofile') }}">
                 <i class="ti ti-pencil me-2"></i>Edit Profile
               </a>
             @else
-              <a class="btn btn-primary btn-lg w-100" href="{{ route('login') }}">
+              <a class="btn btn-primary btn-lg w-100" href="{{ route('userlogin') }}">
                 <i class="ti ti-login me-2"></i>Login to manage profile
               </a>
             @endif
