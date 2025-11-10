@@ -7,8 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
+class UserController extends Controller
 {
+
+    public function index(){
+        return view('login');
+    }
+    
     // REGISTER
     public function register(Request $request)
     {
@@ -52,38 +57,39 @@ class AuthController extends Controller
     }
 
     // LOGIN
-    public function login(Request $request)
+    public function authenticate(Request $request)
     {
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+        // try login
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()->withErrors([
                 'email' => 'Invalid credentials.',
             ])->withInput();
         }
 
+        // ✅ very important: persist the login
+        $request->session()->regenerate();
+
         $user = Auth::user();
 
+        // if you have "status" column
         if ($user->status !== 'active') {
             Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
             return back()->withErrors([
                 'email' => 'Your account is not active.',
             ]);
         }
 
-        // update login meta
-        $user->update([
-            'last_login_at'   => now()->toDateTimeString(),
-            'last_login_ip'   => $request->ip(),
-            'last_user_agent' => $request->userAgent(),
-            // no need to touch avatar here
-        ]);
-
-        return redirect()->intended('/');
+        return redirect()->intended(route('cart.show'));
     }
+
 
     public function logout(Request $request)
     {

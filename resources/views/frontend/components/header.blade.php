@@ -11,14 +11,14 @@
     @auth
         <a href="#">
             <img
-                src="{{ auth()->user()->avatar ? asset(auth()->user()->avatar) : asset('img/avatar-placeholder.png') }}"
+                src="{{ auth()->user()->avatar ? asset(auth()->user()->avatar) : asset('https://avatar.iran.liara.run/username?username=R+C') }}"
                 alt="{{ auth()->user()->name }}"
                 style="object-fit:fill;border-radius:50%;">
         </a>
     @else
         <a href="{{ route('userlogin') }}">
             <img
-                src="{{ asset('img/avatar-placeholder.png') }}"
+                src="{{ asset('https://avatar.iran.liara.run/username?username=R+C') }}"
                 alt="Guest"
                 style="object-fit:fill;border-radius:50%;">
         </a>

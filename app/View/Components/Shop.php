@@ -2,25 +2,67 @@
 
 namespace App\View\Components;
 
-use Closure;
-use Illuminate\Contracts\View\View;
+use App\Models\Products;
 use Illuminate\View\Component;
 
 class Shop extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-    public function __construct()
+    public $category;
+    public $sort;
+
+    public function __construct($category = null, $sort = null)
     {
-        //
+        $this->category = $category;
+        $this->sort = $sort;
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
-    public function render(): View|Closure|string
+    public function render()
     {
-        return view('components.shop');
+        // get distinct categories from products table
+        $categories = Products::query()
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->select('category')
+            ->distinct()
+            ->orderBy('category')
+            ->get()
+            ->pluck('category'); // gives simple array-like collection
+
+        // base query
+        $query = Products::query();
+
+        // filter by category string from products table
+        if ($this->category) {
+            $query->where('category', $this->category);
+        }
+
+        // sorting (param or querystring)
+        $sort = $this->sort ?: request('sort');
+
+        switch ($sort) {
+            case 'popular':
+                // change to your real column if you have one
+                $query->orderByDesc('sold_count');
+                break;
+
+            case 'ratings':
+                $query->orderByDesc('rating');
+                break;
+
+            case 'newest':
+            default:
+                $query->orderByDesc('created_at');
+                break;
+        }
+
+        $products = $query->paginate(24);
+
+        return view('components.shop', [
+            'categories'      => $categories,
+            'products'        => $products,
+            'currentCategory' => $this->category,
+            'currentSort'     => $sort,
+        ]);
     }
 }
+

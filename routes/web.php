@@ -80,7 +80,7 @@ Route::prefix('admin')->group(function(){
 });
 
 //cart routes
-Route::prefix('cart')->group(function(){
+Route::prefix('cart')->middleware('customer')->group(function(){
     Route::get('/', [CartController::class, 'show'])->name('cart.show');
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('/update/{item}', [CartController::class, 'updateQty'])->name('cart.update');
@@ -90,7 +90,7 @@ Route::prefix('cart')->group(function(){
 
 //Auth
 Route::get('login', [UserController::class, 'index'])->name('userlogin');
-Route::post('auth', [UserController::class, 'login'])->name('authentication');
+Route::post('auth', [UserController::class, 'authenticate'])->name('authRoute');
 
 //profile
 Route::get('user/profile', [UserController::class, 'show'])->name('userprofile');
@@ -121,6 +121,8 @@ Route::get('/sliders', [SliderController::class, 'index']);
 Route::get('/products', [ProductsController::class, 'index']);
 
 
-
-//client routes
-Route::get('/', [ClientController::class, 'home'])->name('homeroute');
+Route::middleware(['auth'])->group(function () {
+    //client routes
+  
+});
+  Route::get('/', [ClientController::class, 'home'])->name('homeroute');

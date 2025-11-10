@@ -9,9 +9,9 @@
       @auth
         <div class="user-profile">
           <img
-            src="{{ auth()->user()->avatar ? asset(auth()->user()->avatar) : asset('img/avatar-placeholder.png') }}"
+            src="{{ auth()->user()->avatar ? asset(auth()->user()->avatar) : asset('https://avatar.iran.liara.run/username?username=R+C') }}"
             alt="{{ auth()->user()->name }}"
-            style="width:60px;height:60px;object-fit:cover;border-radius:50%;">
+            style="object-fit:fill;border-radius:50%;">
         </div>
         <div class="user-info">
           <h5 class="user-name mb-1 text-white">{{ auth()->user()->name }}</h5>
@@ -21,7 +21,7 @@
         </div>
       @else
         <div class="user-profile">
-          <img src="{{ asset('img/avatar-placeholder.png') }}" alt="Guest" style="width:60px;height:60px;object-fit:cover;border-radius:50%;">
+          <img src="{{ asset('https://avatar.iran.liara.run/username?username=R+C') }}" alt="Guest" style="object-fit:fill;border-radius:50%;">
         </div>
         <div class="user-info">
           <h5 class="user-name mb-1 text-white">Guest User</h5>
@@ -46,7 +46,7 @@
           </a>
         </li>
         <li class="suha-dropdown-menu">
-          <a href="#"><i class="ti ti-building-store"></i>Shop</a>
+          <a href="{{ route('shop') }}"><i class="ti ti-building-store"></i>Shop</a>
         </li>
         <li>
           <a href="">
