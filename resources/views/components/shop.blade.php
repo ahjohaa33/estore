@@ -8,7 +8,7 @@
     </div>
     <div class="page-heading">
       <h6 class="mb-0">
-        {{ $currentCategory ? $currentCategory : 'Shop Grid' }}
+        {{ $currentCategory ? $currentCategory : 'Shop' }}
       </h6>
     </div>
     <div class="filter-option ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaFilterOffcanvas" aria-controls="suhaFilterOffcanvas">
@@ -49,8 +49,8 @@
             @foreach($categories as $cat)
               <a class="shadow-sm {{ $currentCategory == $cat ? 'active' : '' }}"
                  href="{{ request()->fullUrlWithQuery(['category' => $cat]) }}">
-                <img src="{{ asset('img/product/9.png') }}" alt="">
-                {{ $cat }}
+                <img style="height: 20px;" src="{{ asset('storage').'/'.$cat->category_image  }}" alt="">
+                {{ $cat->name }}
               </a>
             @endforeach
           </div>
@@ -59,7 +59,7 @@
           <!-- Sorting -->
           <div class="select-product-catagory">
             <select class="right small border-0" id="selectProductCatagory" name="selectProductCatagory">
-              <option value="">Short by</option>
+              <option value="">Sort by</option>
               <option value="newest"  {{ $currentSort == 'newest' ? 'selected' : '' }}>Newest</option>
               <option value="popular" {{ $currentSort == 'popular' ? 'selected' : '' }}>Popular</option>
               <option value="ratings" {{ $currentSort == 'ratings' ? 'selected' : '' }}>Ratings</option>
@@ -73,7 +73,7 @@
       <div class="row g-2 rtl-flex-d-row-r">
         @forelse($products as $product)
           <div class="col-6 col-md-4">
-            <div class="card product-card">
+            <div class="card product-card" style="height: 100%;">
               <div class="card-body">
                 <!-- Badge (optional col) -->
                 @if(!empty($product->badge))

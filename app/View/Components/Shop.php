@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use App\Models\Products;
+use App\Models\Category;
 use Illuminate\View\Component;
 
 class Shop extends Component
@@ -10,26 +11,20 @@ class Shop extends Component
     public $category;
     public $sort;
 
-    public function __construct($category = null, $sort = null)
+    public function __construct($sort = null)
     {
-        $this->category = $category;
+        
         $this->sort = $sort;
     }
 
     public function render()
     {
         // get distinct categories from products table
-        $categories = Products::query()
-            ->whereNotNull('category')
-            ->where('category', '!=', '')
-            ->select('category')
-            ->distinct()
-            ->orderBy('category')
-            ->get()
-            ->pluck('category'); // gives simple array-like collection
+        $categories = Category::all();
+
 
         // base query
-        $query = Products::query();
+        $query = Products::withAvg('reviews', 'rating')->withCount('reviews');
 
         // filter by category string from products table
         if ($this->category) {
@@ -42,7 +37,7 @@ class Shop extends Component
         switch ($sort) {
             case 'popular':
                 // change to your real column if you have one
-                $query->orderByDesc('sold_count');
+                $query->orderByDesc('sale_count');
                 break;
 
             case 'ratings':

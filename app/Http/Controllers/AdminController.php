@@ -47,4 +47,8 @@ class AdminController extends Controller
     public function shop(){
         return view('frontend.shop');
     }
+
+    public function best_seller(){
+        return view('frontend.best-seller');
+    }
 }

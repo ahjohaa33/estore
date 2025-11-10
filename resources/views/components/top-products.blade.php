@@ -53,7 +53,7 @@
     <div class="container">
         <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
             <h6>Top Products</h6>
-            <a class="btn btn-sm btn-light" href="shop-grid.html">
+            <a class="btn btn-sm btn-light" href="{{ route('shop') }}">
                 View all<i class="ms-1 ti ti-arrow-right"></i>
             </a>
         </div>

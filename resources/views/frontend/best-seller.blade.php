@@ -1,4 +1,4 @@
 @extends('frontend.layout')
 @section('pages')
-    <x-settings />
+    <x-shop-list />
 @endsection

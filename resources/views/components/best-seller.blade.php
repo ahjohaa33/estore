@@ -2,7 +2,7 @@
       <div class="weekly-best-seller-area py-3">
         <div class="container">
           <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
-            <h6>Weekly Best Sellers</h6><a class="btn btn-sm btn-light" href="shop-list.html">
+            <h6>Weekly Best Sellers</h6><a class="btn btn-sm btn-light" href="{{ route('best-seller') }}">
                View all<i class="ms-1 ti ti-arrow-right"></i></a>
           </div>
           <div class="row g-2">
@@ -18,7 +18,7 @@
                   <div class="product-description">
                     <!-- Product Title --><a class="product-title d-block" href="{{ route('singleproductRoute', $item->name) }}">{{ $item->name }}</a>
                     <!-- Price -->
-                    <p class="sale-price"><i class="ti ti-currency-dollar"></i>{{ $item->offer_price }} BDT<span>{{ $item->price }} BDT</span></p>
+                    <p class="sale-price">{{ $item->offer_price }} BDT<span>{{ $item->price }} BDT</span></p>
                     <!-- Rating -->
                                   <div class="product-rating">
                                   @php

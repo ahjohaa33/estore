@@ -98,8 +98,11 @@ Route::get('user/profile', [UserController::class, 'show'])->name('userprofile')
 //settings
 Route::get('settings', [AdminController::class, 'settinguser'])->name('settingsroute');
 
-//shop
+//shop(top prodcts)
 Route::get('shop', [AdminController::class, 'shop'])->name('shop');
+
+//best seller list
+Route::get('best-sellers', [AdminController::class, 'best_seller'])->name('best-seller');
 
 
 //checkout
