@@ -11,7 +11,7 @@
              @forelse ($result as $item)
                  <!-- Collection Card-->
                 
-                 <div class="card collection-card"><a href="single-product.html"><img style="height: 170px; object-fit:cover; " src="{{ asset('storage').'/'.$item['category_image']}}" alt=""></a>
+                 <div class="card collection-card"><a href="{{ route('categorywiseproducts', $item['category']) }}"><img style="height: 170px; object-fit:cover; " src="{{ asset('storage').'/'.$item['category_image']}}" alt=""></a>
                      <div class="collection-title"><span>{{ $item['category'] }}</span><span class="badge bg-danger">{{ $item['count'] }}</span></div>
                  </div>
              @empty

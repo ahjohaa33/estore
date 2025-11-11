@@ -104,6 +104,8 @@ Route::get('shop', [AdminController::class, 'shop'])->name('shop');
 //best seller list
 Route::get('best-sellers', [AdminController::class, 'best_seller'])->name('best-seller');
 
+//category wise product
+Route::get('/product-category/{category}', [AdminController::class, 'category_product'])->name('categorywiseproducts');
 
 //checkout
 Route::get('/checkout', [AdminController::class, 'checkout'])->name('checkout');

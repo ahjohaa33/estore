@@ -51,4 +51,10 @@ class AdminController extends Controller
     public function best_seller(){
         return view('frontend.best-seller');
     }
+
+    public function category_product($category){
+        return view('frontend.productcategory', ['category'=>$category]);
+    }
+
+    
 }
