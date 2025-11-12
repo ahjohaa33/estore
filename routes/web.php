@@ -27,22 +27,26 @@ use App\Models\Products;
 //     return view('pages.blade.frontend.home')->with('categories', $categories)->with('sliders', $slider)->with('products', $products);
 // })->name('homeRoute');
 
-Route::get('/dashboard2', function(){
-    return view('admin.admin2.dashboard');
-})->name('dashboard2');
+Route::prefix('admin2')->middleware('admin')->group(function(){
+        Route::get('/dashboard2', function(){
+            return view('admin.admin2.dashboard');
+        })->name('dashboard2');
 
 
-Route::get('/categories2', function(){
-    $categories = Category::orderBy('id')->paginate();
-    return view('admin.admin2.categories')->with('categories', $categories);
-})->name('categories2');
+        Route::get('/categories2', function(){
+            $categories = Category::orderBy('id')->paginate();
+            return view('admin.admin2.categories')->with('categories', $categories);
+        })->name('categories2');
 
 
-Route::get('/products2', function(){
-    $products = Products::orderByDesc('id')->paginate(10);
-    $cats = Category::all();
-    return view('admin.admin2.products')->with('products', $products)->with('cats', $cats);
-})->name('products2');
+        Route::get('/products2', function(){
+            $products = Products::orderByDesc('id')->paginate(10);
+            $cats = Category::all();
+            return view('admin.admin2.products')->with('products', $products)->with('cats', $cats);
+        })->name('products2');
+});
+
+
 
 
 
@@ -52,7 +56,7 @@ Route::get('products/{slug}', [ProductsController::class, 'singleProduct'])->nam
 
 
 //backend routes
-Route::prefix('admin')->group(function(){
+Route::prefix('admin')->middleware('admin')->group(function(){
 
     //Navigation
     Route::get('/', [AdminController::class, 'home'])->name('admindashboard');

@@ -273,6 +273,40 @@
         });
     </script>
 
+<script>
+window.addEventListener('pageshow', function (event) {
+    // only refresh when coming back from bfcache
+    if (event.persisted) {
+        refreshCartUI();
+    }
+});
+
+function refreshCartUI() {
+    fetch("{{ route('cart.show') }}", {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        // update cart count
+        const cartCountEl = document.querySelector('.cart-count, #cartCount, [data-cart-count]');
+        if (cartCountEl) {
+            cartCountEl.textContent = data.count;
+        }
+
+        // also reset buy-now buttons so they don't stay "Processing..."
+        const btns = document.querySelectorAll('.neo-btn[data-url][data-product-id]');
+        btns.forEach(b => {
+            b.disabled = false;
+            b.classList.remove('is-processing');
+            b.textContent = b.dataset.originalText || 'Buy Now';
+        });
+    })
+    .catch(console.error);
+}
+</script>
+
 
     @stack('scripts')
 
