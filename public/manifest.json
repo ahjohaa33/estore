@@ -1,13 +1,13 @@
 {
-  "name": "Suha",
-  "short_name": "Suha",
+  "name": "Estore",
+  "short_name": "Estore",
   "start_url": "http://localhost:8000",
   "display": "standalone",
   "background_color": "#625AFA",
   "theme_color": "#625AFA",
   "categories": ["shop", "ecommerce", "fashion"],
   "orientation": "portrait",
-  "description": "Suha - Multipurpose Ecommerce Mobile HTML Template",
+  "description": "Estore - Multipurpose Ecommerce Mobile First Web Application",
   "icons": [{
       "src": "img/icons/icon-72x72.png",
       "type": "image/png",

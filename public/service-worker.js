@@ -7,7 +7,6 @@ const RUNTIME_CACHE = 'runtime-v4';
 // best: generate this list on build
 const PRECACHE_ASSETS = [
   '/',                      // homepage
-  '/offline.html',
   '/css/bootstrap.min.css',
   '/css/tabler-icons.min.css',
   '/css/animate.css',
@@ -29,12 +28,8 @@ const PRECACHE_ASSETS = [
   '/js/no-internet.js',
   '/js/active.js',
   '/js/pwa.js',
-  '/img/bg-img/no-internet.png',
-  '/img/icons/icon-72x72.png',
-  '/img/icons/icon-96x96.png',
-  '/img/icons/icon-152x152.png',
-  '/img/icons/icon-167x167.png',
-  '/img/icons/icon-180x180.png'
+  '/img/bg-img/no-internet.png'
+
 ];
 
 // INSTALL: precache everything

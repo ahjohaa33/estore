@@ -7,6 +7,7 @@
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, shrink-to-fit=no">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#625AFA">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -21,6 +22,7 @@
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap"
         rel="stylesheet">
     <!-- Favicon -->
+    
     <link rel="icon" href="img/icons/icon-72x72.png">
     <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="img/icons/icon-96x96.png">
