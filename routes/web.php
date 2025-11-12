@@ -28,6 +28,11 @@ use App\Models\Products;
 // })->name('homeRoute');
 
 Route::prefix('admin2')->middleware('admin')->group(function(){
+
+        Route::get('/', function(){
+            return redirect()->intended(route('dashboard2'));
+        });
+        
         Route::get('/dashboard2', function(){
             return view('admin.admin2.dashboard');
         })->name('dashboard2');

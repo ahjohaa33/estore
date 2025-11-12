@@ -15,7 +15,7 @@ class isAdmin
     {
         // make sure user is logged in
         if (!auth()->check()) {
-            return redirect()->route('login');
+            return redirect()->route('userlogin');
         }
 
         // adjust this condition to your users table
