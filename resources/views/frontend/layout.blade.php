@@ -22,7 +22,7 @@
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap"
         rel="stylesheet">
     <!-- Favicon -->
-    
+
     <link rel="icon" href="img/icons/icon-72x72.png">
     <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="img/icons/icon-96x96.png">
@@ -68,8 +68,9 @@
         .global-alert {
             min-width: 400px;
             text-align: center;
-            
+
         }
+
         /* Button consistency */
         .buttons-wrapper .neo-btn {
             padding: 10px 14px;
@@ -77,8 +78,9 @@
             font-weight: 600;
             border-radius: 10px;
             transition: 0.25s ease;
-            box-shadow: none !important; /* No glow EVER */
-            border: 2px solid rgba(255,255,255,0.2); 
+            box-shadow: none !important;
+            /* No glow EVER */
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         /* BUY NOW – main CTA */
@@ -86,6 +88,7 @@
             background: #ff5e57;
             color: #fff;
         }
+
         .buy-now-btn:hover {
             background: #ff3c35;
             color: #fff;
@@ -93,25 +96,29 @@
 
         /* ADD TO CART – subtle secondary */
         .outline-cart-btn {
-            background: rgba(200,200,200,0.7);
-            border: 1.5px solid rgba(200, 200, 200, 0.7); /* stronger border */  /* Dark-mode friendly */
+            background: rgba(200, 200, 200, 0.7);
+            border: 1.5px solid rgba(200, 200, 200, 0.7);
+            /* stronger border */
+            /* Dark-mode friendly */
             color: var(--text-color, #0b0b0b);
         }
+
         .outline-cart-btn:hover {
             background: rgba(79, 78, 78, 0.08);
-            border-color: rgba(255,255,255,0.35);
+            border-color: rgba(255, 255, 255, 0.35);
         }
 
         /* Light mode override */
         @media (prefers-color-scheme: light) {
             .outline-cart-btn {
-                border-color: rgba(0,0,0,0.25);
+                border-color: rgba(0, 0, 0, 0.25);
                 color: #333;
-                
+
             }
+
             .outline-cart-btn:hover {
-                background: rgba(0,0,0,0.06);
-                border-color: rgba(0,0,0,0.4);
+                background: rgba(0, 0, 0, 0.06);
+                border-color: rgba(0, 0, 0, 0.4);
             }
         }
 
@@ -259,38 +266,37 @@
     </script> --}}
 
     <script>
+        // Utility function for showing alerts
+        function showAlert(message, type) {
+            // Remove existing alerts
+            const existingAlert = document.querySelector('.global-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
 
-                    // Utility function for showing alerts
-            function showAlert(message, type) {
-                // Remove existing alerts
-                const existingAlert = document.querySelector('.global-alert');
-                if (existingAlert) {
-                    existingAlert.remove();
-                }
-
-                const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-                const alertHtml = `
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            const alertHtml = `
                 <div class="global-alert alert ${alertClass} alert-dismissible fade show position-fixed" style="top: 20px; right: 20px; z-index: 9999;">
                     ${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             `;
 
-                document.body.insertAdjacentHTML('beforeend', alertHtml);
+            document.body.insertAdjacentHTML('beforeend', alertHtml);
 
-                // Auto remove after 5 seconds
-                // setTimeout(() => {
-                //     const alert = document.querySelector('.global-alert');
-                //     if (alert) {
-                //         alert.remove();
-                //     }
-                // }, 10000);
-            }
+            // Auto remove after 5 seconds
+            // setTimeout(() => {
+            //     const alert = document.querySelector('.global-alert');
+            //     if (alert) {
+            //         alert.remove();
+            //     }
+            // }, 10000);
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             document.body.addEventListener('click', async function(e) {
                 const btn = e.target.closest('.outline-cart-btn');
-               
+
                 if (!btn) return;
                 e.preventDefault();
 
@@ -334,7 +340,9 @@
 
                     // CASE 1: JSON success
                     if (data.status === 'success') {
-                        showAlert(`${data.message || 'Product added to cart.'} <span class="mx-3"></span> 👉 <a href="{{ route('checkout') }}">Checkout</a>`, 'success');
+                        showAlert(
+                            `${data.message || 'Product added to cart.'} <span class="mx-3"></span> 👉 <a href="{{ route('checkout') }}">Checkout</a>`,
+                            'success');
 
                         btn.disabled = false;
                         btn.classList.remove('opacity-75', 'pointer-events-none');
@@ -345,7 +353,9 @@
 
                     // CASE 2: HTML/redirect response but OK
                     if (res.ok && !ct.includes('application/json')) {
-                        showAlert(`${data.message || 'Product added to cart.'} <span class="mx-3"></span> 👉 <a href="{{ route('checkout') }}">Checkout</a>`, 'success');
+                        showAlert(
+                            `${data.message || 'Product added to cart.'} <span class="mx-3"></span> 👉 <a href="{{ route('checkout') }}">Checkout</a>`,
+                            'success');
 
                         btn.disabled = false;
                         btn.classList.remove('opacity-75', 'pointer-events-none');
@@ -370,11 +380,10 @@
         });
     </script>
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
             document.body.addEventListener('click', async function(e) {
                 const btn = e.target.closest('.buy-now-btn');
-               
+
                 if (!btn) return;
                 e.preventDefault();
 
@@ -429,7 +438,9 @@
 
                     // CASE 2: HTML/redirect response but OK
                     if (res.ok && !ct.includes('application/json')) {
-                        showAlert(`${data.message || 'Product added to cart.'} <span class="mx-3"></span> 👉 <a href="{{ route('checkout') }}">Checkout</a>`, 'success');
+                        showAlert(
+                            `${data.message || 'Product added to cart.'} <span class="mx-3"></span> 👉 <a href="{{ route('checkout') }}">Checkout</a>`,
+                            'success');
 
                         btn.disabled = false;
                         btn.classList.remove('opacity-75', 'pointer-events-none');
@@ -456,39 +467,39 @@
 
 
 
-<script>
-window.addEventListener('pageshow', function (event) {
-    // only refresh when coming back from bfcache
-    if (event.persisted) {
-        refreshCartUI();
-    }
-});
-
-function refreshCartUI() {
-    fetch("{{ route('cart.show') }}", {
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(r => r.json())
-    .then(data => {
-        // update cart count
-        const cartCountEl = document.querySelector('.cart-count, #cartCount, [data-cart-count]');
-        if (cartCountEl) {
-            cartCountEl.textContent = data.count;
-        }
-
-        // also reset buy-now buttons so they don't stay "Processing..."
-        const btns = document.querySelectorAll('.neo-btn[data-url][data-product-id]');
-        btns.forEach(b => {
-            b.disabled = false;
-            b.classList.remove('is-processing');
-            b.textContent = b.dataset.originalText || 'Buy Now';
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            // only refresh when coming back from bfcache
+            if (event.persisted) {
+                refreshCartUI();
+            }
         });
-    })
-    .catch(console.error);
-}
-</script>
+
+        function refreshCartUI() {
+            fetch("{{ route('cart.show') }}", {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    // update cart count
+                    const cartCountEl = document.querySelector('.cart-count, #cartCount, [data-cart-count]');
+                    if (cartCountEl) {
+                        cartCountEl.textContent = data.count;
+                    }
+
+                    // also reset buy-now buttons so they don't stay "Processing..."
+                    const btns = document.querySelectorAll('.neo-btn[data-url][data-product-id]');
+                    btns.forEach(b => {
+                        b.disabled = false;
+                        b.classList.remove('is-processing');
+                        b.textContent = b.dataset.originalText || 'Buy Now';
+                    });
+                })
+                .catch(console.error);
+        }
+    </script>
 
 
     @stack('scripts')

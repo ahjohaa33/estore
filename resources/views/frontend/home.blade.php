@@ -3,25 +3,7 @@
     <div>
     <div class="page-content-wrapper">
       <!-- Search Form-->
-      <!-- Search Form-->
-      <div class="container">
-        <div class="search-form rtl-flex-d-row-r">
-          <form action="#" method="">
-            <input class="form-control" type="search" placeholder="Search in Topu Sports...">
-            <button type="submit"><i class="ti ti-search"></i></button>
-          </form>
-          <!-- Alternative Search Options -->
-          <div class="alternative-search-options">
-            <div class="dropdown"><a class="btn btn-primary dropdown-toggle" id="altSearchOption" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ti ti-adjustments-horizontal"></i></a>
-              <!-- Dropdown Menu -->
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="altSearchOption">
-                <li><a class="dropdown-item" href="#"><i class="ti ti-microphone"> </i>Voice</a></li>
-                <li><a class="dropdown-item" href="#"><i class="ti ti-layout-collage"> </i>Image</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
+     
       <x-slider />
       <x-collections />
       <!-- Top Products -->
@@ -39,7 +21,7 @@
       </div>
 
       <!-- CTA Area -->
-      <div class="container">
+      {{-- <div class="container">
         <div class="cta-text dir-rtl p-4 p-lg-5">
           <div class="row">
             <div class="col-9">
@@ -47,11 +29,11 @@
             </div>
           </div><img src="img/bg-img/make-up.png" alt="">
         </div>
-      </div>
+      </div> --}}
       <!-- Weekly Best Sellers-->
      <x-best-seller />
       <!-- Discount Coupon Card-->
-      <div class="container">
+      {{-- <div class="container">
         <div class="discount-coupon-card p-4 p-lg-5 dir-rtl">
           <div class="d-flex align-items-center">
             <div class="discountIcon"><img class="w-100" src="img/core-img/discount.png" alt=""></div>
@@ -61,7 +43,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> --}}
       <!-- Featured Products Wrapper-->
       <x-featured-products />
 

@@ -9,6 +9,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\SearchController;
 use App\Models\Category;
 use App\Models\Slider;
 use App\Models\Products;
@@ -57,6 +58,12 @@ Route::prefix('admin2')->middleware('admin')->group(function(){
 
 //frontend routes
 Route::get('products/{slug}', [ProductsController::class, 'singleProduct'])->name('singleproductRoute');
+
+
+//search routes
+Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
+Route::get('/search', [SearchController::class, 'index'])->name('search.index'); // optional: full search results page
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 
 

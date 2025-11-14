@@ -1,7 +1,7 @@
         <div class="related-product-wrapper bg-white py-3 mb-3">
             <div class="container">
                 <div class="section-heading d-flex align-items-center justify-content-between rtl-flex-d-row-r">
-                    <h6>Related Products</h6><a class="btn btn-sm btn-secondary" href="shop-grid.html">View all</a>
+                    <h6>Related Products</h6><a class="btn btn-sm btn-secondary" href="{{ route('shop') }}">View all</a>
                 </div>
                 <div class="related-product-slide owl-carousel">
                     @forelse ($product as $item)
