@@ -69,13 +69,34 @@
                                 </small>
                                 </div>
                                
-                                <!-- In your product card/list -->
-                                <a href="#" class="neo-btn" data-url="{{ route('cart.add') }}"
-                                    data-product-id="{{ $item->id }}" data-qty="1"
-                                    data-color="{{ $defaultColor ?? '' }}" data-size="{{ $defaultSize ?? '' }}"
-                                    aria-label="Buy Now">
-                                    Buy Now
-                                </a>
+                        <!-- BUTTON WRAPPER -->
+                        <div class="d-flex flex-wrap gap-2 mt-3 buttons-wrapper">
+
+                            <!-- Add to Cart -->
+                            <a href="#"
+                                class="neo-btn outline-cart-btn flex-fill text-center"
+                                data-url="{{ route('cart.add') }}"
+                                data-product-id="{{ $item->id }}"
+                                data-qty="1"
+                                data-color="{{ $defaultColor ?? '' }}"
+                                data-size="{{ $defaultSize ?? '' }}"
+                                aria-label="Add to Cart">
+                                Add to Cart
+                            </a>
+
+                            <!-- Buy Now -->
+                            <a href="#"
+                                class="neo-btn buy-now-btn flex-fill text-center"
+                                data-url="{{ route('cart.add') }}"
+                                data-product-id="{{ $item->id }}"
+                                data-qty="1"
+                                data-color="{{ $defaultColor ?? '' }}"
+                                data-size="{{ $defaultSize ?? '' }}"
+                                aria-label="Buy Now">
+                                Buy Now
+                            </a>
+
+                        </div>
                             </div>
                         </div>
                     @empty

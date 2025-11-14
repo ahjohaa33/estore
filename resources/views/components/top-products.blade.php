@@ -32,7 +32,7 @@
         padding: 6px 10px;
         border-radius: 6px;
         min-width: 150px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        /* box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); */
         white-space: nowrap;
         opacity: 0;
         pointer-events: none;
@@ -45,6 +45,9 @@
         transform: translateY(-50%) translateX(-4px);
         /* tiny nudge toward button */
     }
+
+
+
 
 
 </style>
@@ -129,12 +132,35 @@
 
 
 
-                            <a href="#" class="neo-btn" data-url="{{ route('cart.add') }}"
-                                data-product-id="{{ $item->id }}" data-qty="1"
-                                data-color="{{ $defaultColor ?? '' }}" data-size="{{ $defaultSize ?? '' }}"
+                        <!-- BUTTON WRAPPER -->
+                        <div class="d-flex flex-wrap gap-2 mt-3 buttons-wrapper">
+
+                            <!-- Add to Cart -->
+                            <a href="#"
+                                class="neo-btn outline-cart-btn flex-fill text-center"
+                                data-url="{{ route('cart.add') }}"
+                                data-product-id="{{ $item->id }}"
+                                data-qty="1"
+                                data-color="{{ $defaultColor ?? '' }}"
+                                data-size="{{ $defaultSize ?? '' }}"
+                                aria-label="Add to Cart">
+                                Add to Cart
+                            </a>
+
+                            <!-- Buy Now -->
+                            <a href="#"
+                                class="neo-btn buy-now-btn flex-fill text-center"
+                                data-url="{{ route('cart.add') }}"
+                                data-product-id="{{ $item->id }}"
+                                data-qty="1"
+                                data-color="{{ $defaultColor ?? '' }}"
+                                data-size="{{ $defaultSize ?? '' }}"
                                 aria-label="Buy Now">
                                 Buy Now
                             </a>
+
+                        </div>
+
 
 
 

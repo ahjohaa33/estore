@@ -87,7 +87,7 @@ class UserController extends Controller
             ]);
         }
 
-        return redirect()->intended(route('cart.show'));
+        return redirect()->intended();
     }
 
 

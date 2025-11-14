@@ -23,7 +23,7 @@ class FeaturedProducts extends Component
     public function render(): View|Closure|string
     {
         $featured = Products::where('is_featured', true)->withAvg('reviews', 'rating')->withCount('reviews')
-                        ->take(4) 
+                        ->take(20) 
                         ->get();
         return view('components.featured-products')->with('featured', $featured);
     }

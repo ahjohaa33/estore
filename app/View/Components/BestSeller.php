@@ -27,7 +27,7 @@ class BestSeller extends Component
                     ->withAvg('reviews', 'rating')   // adds: reviews_avg_rating
                     ->withCount('reviews')
                     ->orderBy('sale_count', 'desc')
-                    ->take(4)
+                    ->take(12)
                     ->get();
         return view('components.best-seller')->with('bestseller', $bestSeller);
     }

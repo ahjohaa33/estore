@@ -89,7 +89,7 @@ Route::prefix('admin')->middleware('admin')->group(function(){
 });
 
 //cart routes
-Route::prefix('cart')->middleware('customer')->group(function(){
+Route::prefix('cart')->group(function(){
     Route::get('/', [CartController::class, 'show'])->name('cart.show');
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('/update/{item}', [CartController::class, 'updateQty'])->name('cart.update');
@@ -134,9 +134,6 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/sliders', [SliderController::class, 'index']);
 Route::get('/products', [ProductsController::class, 'index']);
 
+Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth'])->group(function () {
-    //client routes
-  
-});
-  Route::get('/', [ClientController::class, 'home'])->name('homeroute');
+Route::get('/', [ClientController::class, 'home'])->name('homeroute');

@@ -87,39 +87,119 @@
       </div>
 
       <div class="row g-2">
-        @forelse($products as $product)
-          <div class="col-12">
-            <div class="card horizontal-product-card">
-              <div class="d-flex align-items-center">
-                <div class="product-thumbnail-side">
-                  <a class="product-thumbnail d-block" href="{{ route('singleproductRoute', $product->slug ?? $product->id) }}">
-                    <img src="{{ asset('storage').'/'.$product->images[0] ?? asset('img/product/18.png') }}" alt="{{ $product->name }}">
-                  </a>
-                  <a class="wishlist-btn" href="#"><i class="ti ti-heart"></i></a>
+        @forelse($products as $item)
+          <div class="col-6 col-md-3">
+                    <div class="card product-card">
+                        <div class="card-body">
+
+
+                            <!-- Carousel -->
+                            <div class="product-carousel owl-carousel owl-theme mb-2">
+                                @if (!empty($item->images))
+                                    @foreach ($item->images as $img)
+                                        <div class="item">
+                                            <span class="badge rounded-pill badge-warning">Sale</span>
+                                            <a class="wishlist-btn" href="#"><i class="ti ti-heart"></i></a>
+                                            <img style="object-fit: cover;"
+                                                src="{{ asset('storage/' . ltrim($img, '/')) }}"
+                                                alt="{{ $item->name }}">
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="item">
+                                        <img src="{{ asset('default-product.png') }}" alt="No image">
+                                    </div>
+                                @endif
+                            </div>
+
+                            <a class="product-title"
+                                href="{{ route('singleproductRoute', $item->name) }}">{{ $item->name }}</a>
+                            <p class="sale-price">{{ $item->offer_price }} BDT<span>{{ $item->price }} BDT</span></p>
+
+                            <div class="d-flex gap-2">
+                                <div class="product-rating">
+                                    @php
+                                        $avg = round($item->reviews_avg_rating ?? 0, 1); // 0–5, one decimal
+                                        $full = (int) floor($avg);
+                                        $dec = $avg - $full;
+                                        // .75+ rounds up to another full star; .25–.74 shows a half
+                                        if ($dec >= 0.75) {
+                                            $full++;
+                                            $half = 0;
+                                        } else {
+                                            $half = $dec >= 0.25 ? 1 : 0;
+                                        }
+                                        $empty = 5 - $full - $half;
+                                    @endphp
+
+                                    {{-- full stars --}}
+                                    @for ($i = 0; $i < $full; $i++)
+                                        <i class="ti ti-star-filled"></i>
+                                    @endfor
+
+                                    {{-- half star --}}
+                                    @if ($half)
+                                        <i class="ti ti-star-half-filled"></i>
+                                    @endif
+
+                                    {{-- empty stars --}}
+                                    @for ($i = 0; $i < 3; $i++)
+                                        <i class="ti ti-star"></i>
+                                    @endfor
+                                </div>
+                                <small class="text-muted">
+                                    ({{ $item->reviews_count }} {{ Str::plural('review', $item->reviews_count) }})
+                                </small>
+                            </div>
+
+
+
+
+
+
+                        <!-- BUTTON WRAPPER -->
+                        <div class="d-flex flex-wrap gap-2 mt-3 buttons-wrapper">
+
+                            <!-- Add to Cart -->
+                            <a href="#"
+                                class="neo-btn outline-cart-btn flex-fill text-center"
+                                data-url="{{ route('cart.add') }}"
+                                data-product-id="{{ $item->id }}"
+                                data-qty="1"
+                                data-color="{{ $defaultColor ?? '' }}"
+                                data-size="{{ $defaultSize ?? '' }}"
+                                aria-label="Add to Cart">
+                                Add to Cart
+                            </a>
+
+                            <!-- Buy Now -->
+                            <a href="#"
+                                class="neo-btn buy-now-btn flex-fill text-center"
+                                data-url="{{ route('cart.add') }}"
+                                data-product-id="{{ $item->id }}"
+                                data-qty="1"
+                                data-color="{{ $defaultColor ?? '' }}"
+                                data-size="{{ $defaultSize ?? '' }}"
+                                aria-label="Buy Now">
+                                Buy Now
+                            </a>
+
+                        </div>
+
+
+
+
+
+
+
+
+                            <!-- In your product card/list -->
+
+
+
+                        </div>
+                    </div>
                 </div>
-                <div class="product-description">
-                  <a class="product-title d-block" href="{{ route('singleproductRoute', $product->slug ?? $product->id) }}">
-                    {{ $product->name }}
-                  </a>
-                  <p class="sale-price">
-                   
-                    {{ number_format($product->offer_price ?? $product->price ?? 0, 2) }} BDT
-                    @if(!empty($product->price) && !empty($product->offer_price) && $product->offer_price < $product->price)
-                      <span>{{ number_format($product->price, 2) }} BDT</span>
-                    @endif
-                  </p>
-                  <div class="product-rating">
-                    @php
-                      $rating = $product->reviews_avg_rating ?? 5;
-                      $reviewCount = $product->reviews_count ?? 0;
-                    @endphp
-                    <i class="ti ti-star-filled"></i>{{ number_format($rating, 2) }}
-                    <span class="ms-1">({{ $reviewCount }} review)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         @empty
           <div class="col-12">
             <p class="text-center mt-4">No products found.</p>
