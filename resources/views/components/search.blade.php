@@ -7,7 +7,7 @@
         class="form-control"
         type="search"
         autocomplete="off"
-        placeholder="Search in Topu Sports..."
+        placeholder="Search in store..."
         aria-autocomplete="list"
         aria-controls="search-suggestions"
         aria-expanded="false"
