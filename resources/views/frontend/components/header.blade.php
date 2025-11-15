@@ -2,7 +2,7 @@
     <div class="header-area" id="headerArea">
         <div class="container h-100 d-flex align-items-center justify-content-between d-flex rtl-flex-d-row-r">
             <!-- Logo Wrapper -->
-            <div class="logo-wrapper"><a style="text-decoration: none; font-size: 24px;"
+            <div class="logo-wrapper"><a style="text-decoration: none; font-size: 18px;"
                     href="{{ route('homeroute') }}">{{ config('app.name') }}</a>
             </div>
              <x-search />

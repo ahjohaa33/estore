@@ -1,8 +1,8 @@
-  <form action="{{ route('search.index') }}" method="get" class="product-search-form position-relative w-75"
+  <form action="{{ route('search.index') }}" method="get" class="product-search-form position-relative w-75 "
       onsubmit="return handleSearchSubmit(event)">
 
       <div class="product-search-input-wrapper d-flex align-items-center">
-          <input id="search-input" name="q" class="form-control shadow-none product-search-input " type="search"
+          <input id="search-input" name="q" class="form-control border-0 shadow-none product-search-input " type="search"
               autocomplete="off" placeholder="Search in store..." aria-autocomplete="list"
               aria-controls="search-suggestions" aria-expanded="false" aria-haspopup="listbox" role="combobox">
           <button type="submit" class="btn product-search-btn d-flex align-items-center justify-content-center">
