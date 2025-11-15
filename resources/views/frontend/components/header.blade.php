@@ -5,9 +5,10 @@
             <div class="logo-wrapper"><a style="text-decoration: none; font-size: 24px;"
                     href="{{ route('homeroute') }}">{{ config('app.name') }}</a>
             </div>
+             <x-search />
             <div class="navbar-logo-container d-flex align-items-center">
 
-              <x-search />
+             
                 <!-- Cart Icon -->
                 <div class="cart-icon-wrap"><a href="{{ route('cart.show') }}"><i class="ti ti-basket-bolt"></i><span
                             style="background-color: red;">{{ $globalCartCount ?? 0 }}</span></a>

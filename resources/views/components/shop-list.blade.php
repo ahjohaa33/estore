@@ -8,7 +8,7 @@
     </div>
     <div class="page-heading">
       <h6 class="mb-0">
-        {{ $currentCategory ? $currentCategory : 'Shop List' }}
+        {{ $currentCategory ? $currentCategory['name'] : 'Best Sellers' }}
       </h6>
     </div>
     <div class="filter-option ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaFilterOffcanvas" aria-controls="suhaFilterOffcanvas">
@@ -58,7 +58,7 @@
         <div class="col-4">
           <div class="select-product-catagory d-flex gap-1">
             <select class="right small border-0" id="selectProductSort" name="selectProductSort">
-              <option value="">Short by</option>
+              <option value="">Sort by</option>
               <option value="newest"  {{ $currentSort == 'newest' ? 'selected' : '' }}>Newest</option>
               <option value="popular" {{ $currentSort == 'popular' ? 'selected' : '' }}>Popular</option>
               <option value="ratings" {{ $currentSort == 'ratings' ? 'selected' : '' }}>Ratings</option>

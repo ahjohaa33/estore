@@ -8,7 +8,7 @@
         </div>
         <div class="page-heading">
             <h6 class="mb-0">
-                {{ $currentCategory ? $currentCategory : 'Shop' }}
+                {{ $currentCategory ? $currentCategory['name'] : 'Shop' }}
             </h6>
         </div>
         <div class="filter-option ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaFilterOffcanvas"
@@ -193,6 +193,8 @@
             </div>
         </div>
     </div>
+
+
 </div>
 
 <script>
