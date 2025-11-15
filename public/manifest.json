@@ -1,7 +1,7 @@
 {
-  "name": "Estore",
-  "short_name": "Estore",
-  "start_url": "http://localhost:8000",
+  "name": "TheBrainBD",
+  "short_name": "TheBrainBD",
+  "start_url": "https://thebrainbd.com",
   "display": "standalone",
   "background_color": "#625AFA",
   "theme_color": "#625AFA",
