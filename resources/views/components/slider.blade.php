@@ -1,7 +1,7 @@
       <!-- Hero Wrapper -->
       <div class="hero-wrapper">
         <div class="container">
-          <div class="pt-3">
+          
             <!-- Hero Slides-->
             <div class="hero-slides owl-carousel">
             @forelse ($slides as $item)
@@ -33,6 +33,6 @@
             
                    
             </div>
-          </div>
+          
         </div>
       </div>

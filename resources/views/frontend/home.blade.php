@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 @section('pages')
-    <div>
+   
     <div class="page-content-wrapper">
       <!-- Search Form-->
      
@@ -85,5 +85,5 @@
         </div>
       </div> --}}
     </div>
-    </div>
+    
 @endsection
