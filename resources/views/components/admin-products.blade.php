@@ -106,16 +106,46 @@
 
                     </tbody>
                 </table>
-                <div class="table-pagination">
-                    <span>Showing 1-5 of 856 products</span>
-                    <div class="pagination-buttons">
-                        <button class="btn-pagination" disabled><i class="fas fa-chevron-left"></i></button>
-                        <button class="btn-pagination active">1</button>
-                        <button class="btn-pagination">2</button>
-                        <button class="btn-pagination">3</button>
-                        <button class="btn-pagination"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
+<div class="table-pagination">
+    <span>
+        Showing {{ $products->firstItem() }}-{{ $products->lastItem() }}
+        of {{ $products->total() }} products
+    </span>
+
+    <div class="pagination-buttons">
+        {{-- Previous --}}
+        @if ($products->onFirstPage())
+            <button class="btn-pagination" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        @else
+            <a href="{{ $products->previousPageUrl() }}" class="btn-pagination">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        @endif
+
+        {{-- Page Numbers --}}
+        @for ($i = 1; $i <= $products->lastPage(); $i++)
+            @if ($i == $products->currentPage())
+                <span class="btn-pagination active">{{ $i }}</span>
+            @else
+                <a href="{{ $products->url($i) }}" class="btn-pagination">{{ $i }}</a>
+            @endif
+        @endfor
+
+        {{-- Next --}}
+        @if ($products->hasMorePages())
+            <a href="{{ $products->nextPageUrl() }}" class="btn-pagination">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        @else
+            <button class="btn-pagination" disabled>
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        @endif
+    </div>
+</div>
+
             </div>
         </div>
     </main>

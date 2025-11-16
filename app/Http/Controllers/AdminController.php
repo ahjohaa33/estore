@@ -24,7 +24,7 @@ class AdminController extends Controller
     }
 
     public function categories(){
-        $categories = Category::orderBy('id')->paginate();
+        $categories = Category::orderBy('id')->paginate(10);
         return view('admin.categoriesadmin')->with('categories', $categories);
     }
 

@@ -22,7 +22,7 @@ class SliderAdmin extends Component
      */
     public function render(): View|Closure|string
     {
-        $slider = Slider::all();
+        $slider = Slider::paginate(10);
         return view('components.slider-admin')->with('sliders', $slider);
     }
 }
